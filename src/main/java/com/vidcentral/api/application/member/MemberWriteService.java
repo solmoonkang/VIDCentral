@@ -20,8 +20,7 @@ public class MemberWriteService {
 		validateNicknameDuplication(signUpRequest.nickname());
 		validatePasswordMatch(signUpRequest.password(), signUpRequest.checkPassword());
 
-		memberRepository.save(MemberMapper.createMember(
-			signUpRequest, passwordEncoder.encode(signUpRequest.password())));
+		memberRepository.save(MemberMapper.toMember(signUpRequest, passwordEncoder.encode(signUpRequest.password())));
 	}
 
 	private void validateEmailDuplication(String email) {
