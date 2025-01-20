@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MemberMapper {
 
-	public static Member createMember(SignUpRequest signUpRequest, String encodedPassword) {
+	public static Member toMember(SignUpRequest signUpRequest, String encodedPassword) {
 		return Member.builder()
 			.email(signUpRequest.email())
 			.password(encodedPassword)
