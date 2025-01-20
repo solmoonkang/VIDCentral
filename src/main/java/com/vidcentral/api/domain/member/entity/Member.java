@@ -1,4 +1,4 @@
-package com.vidcentral.api.domain.entity;
+package com.vidcentral.api.domain.member.entity;
 
 import com.vidcentral.global.common.entity.BaseTimeEntity;
 
