@@ -1,0 +1,28 @@
+jwt:
+  iss: vid-central
+  secret-access-key: 64461f01e1af406da538b9c48d801ce59142452199ff112fb5404c8e7e98e3ff
+  access-token-expire: 300_000
+  refresh-token-expire: 604_800_000
+
+spring:
+  application:
+    name: VIDCentral
+
+  h2:
+    console:
+      enabled: true
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:tcp://localhost/~/vid-central
+    username: sa
+    password:
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
