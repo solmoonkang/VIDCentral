@@ -1,11 +1,4 @@
-HELP.md
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### STS ###
+### STS (Spring Tool Suite) ###
 .apt_generated
 .classpath
 .factorypath
@@ -17,8 +10,12 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
-### IntelliJ IDEA ###
-.idea
+### VS Code ###
+.vscode/
+.history/
+
+### IDE 관련(IntelliJ): IDE에서 생성되는 사용자 설정 파일이나 환경 설정 파일은 보통 필요하지 않다.
+.idea/
 *.iws
 *.iml
 *.ipr
@@ -26,12 +23,46 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
-### NetBeans ###
+### Java 관련: 컴파일된 클래스 파일, 패키지 파일, 로그 파일과 JVM 오류 보고서 파일은 제외한다.
+*.class
+*.jar
+*.war
+*.zip
+*.log
+hs_err_pid*
+
+### Maven: target/ 및 build/ 디렉토리는 빌드 아티팩트를 포함하므로 제외한다.
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+
+### Gradle: Gradle Wrapper 관련 파일은 포함시키는 것이 좋다.
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### macOS: 캐시 파일이나 설정 파일은 제외한다.
+.DS_Store
+
+### Windows: 캐시 파일이나 설정 파일은 제외한다.
+Thumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+### NetBeans: 관련 파일은 모두 제외한다.
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
 
-### VS Code ###
-.vscode/
+### Secret Files ###
+
+### Temporary Files ###
+tmp/
+
+# End of optimized .gitignore
