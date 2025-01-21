@@ -21,6 +21,7 @@ public final class MemberMapper {
 	public static MemberInfoResponse toMemberInfoResponse(Member member) {
 		return MemberInfoResponse.builder()
 			.nickname(member.getNickname())
+			.introduce(member.getIntroduce())
 			.profileImage(member.getProfileImage())
 			.build();
 	}
