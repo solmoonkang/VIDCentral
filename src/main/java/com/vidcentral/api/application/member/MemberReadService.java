@@ -15,6 +15,11 @@ public class MemberReadService {
 
 	private final MemberRepository memberRepository;
 
+	public Member readMember(String email) {
+		return memberRepository.findMemberByEmail(email)
+			.orElseThrow(() -> new IllegalArgumentException("[❎ ERROR] 요청하신 사용자를 찾을 수 없습니다."));
+	}
+
 	public Optional<Member> findMember(String email) {
 		return memberRepository.findMemberByEmail(email);
 	}
