@@ -2,6 +2,7 @@ package com.vidcentral.global.auth.filter;
 
 import static com.vidcentral.global.common.util.GlobalConstant.*;
 import static com.vidcentral.global.common.util.TokenConstant.*;
+import static com.vidcentral.global.error.model.ErrorMessage.*;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import com.vidcentral.api.application.auth.JwtProviderService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.global.common.util.CookieUtils;
+import com.vidcentral.global.error.exception.NotFoundException;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,8 +36,14 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
 		String accessToken = jwtProviderService.extractToken(ACCESS_TOKEN_HEADER, httpServletRequest);
 		String refreshToken = CookieUtils.extractRefreshTokenFromCookies(httpServletRequest);
+		String requestURI = httpServletRequest.getRequestURI();
 
 		try {
+			if (!jwtProviderService.isAuthenticationRequired(requestURI)) {
+				filterChain.doFilter(httpServletRequest, httpServletResponse);
+				return;
+			}
+
 			if (jwtProviderService.isUsable(accessToken)) {
 				setAuthenticate(accessToken);
 				filterChain.doFilter(httpServletRequest, httpServletResponse);
@@ -49,7 +57,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 				return;
 			}
 
-			throw new IllegalArgumentException("[❎ ERROR] JWT 토큰을 찾지 못했습니다.");
+			throw new NotFoundException(FAILED_TOKEN_NOT_FOUND);
 		} catch (Exception exception) {
 			log.warn("[✅ LOGGER] JWT 에러 상세 설명: {}", exception.getMessage());
 			handlerExceptionResolver.resolveException(httpServletRequest, httpServletResponse, null, exception);
