@@ -1,7 +1,7 @@
 package com.vidcentral.api.application.auth;
 
-import com.vidcentral.api.dto.request.TokenRequest;
-import com.vidcentral.api.dto.response.LoginResponse;
+import com.vidcentral.api.dto.response.auth.LoginResponse;
+import com.vidcentral.api.dto.response.auth.TokenSaveResponse;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -16,9 +16,8 @@ public class AuthenticationMapper {
 			.build();
 	}
 
-	public static TokenRequest toTokenRequest(String accessToken, String refreshToken) {
-		return TokenRequest.builder()
-			.accessToken(accessToken)
+	public static TokenSaveResponse toTokenSaveRequest(String refreshToken) {
+		return TokenSaveResponse.builder()
 			.refreshToken(refreshToken)
 			.build();
 	}

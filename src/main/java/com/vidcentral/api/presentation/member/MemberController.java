@@ -2,21 +2,28 @@ package com.vidcentral.api.presentation.member;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vidcentral.api.application.member.MemberService;
-import com.vidcentral.api.dto.request.LoginRequest;
-import com.vidcentral.api.dto.request.SignUpRequest;
-import com.vidcentral.api.dto.response.LoginResponse;
+import com.vidcentral.api.domain.auth.entity.AuthMember;
+import com.vidcentral.api.dto.request.auth.LoginRequest;
+import com.vidcentral.api.dto.request.member.SignUpRequest;
+import com.vidcentral.api.dto.request.member.UpdateMemberRequest;
+import com.vidcentral.api.dto.response.auth.LoginResponse;
+import com.vidcentral.api.dto.response.member.MemberInfoResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -57,7 +64,47 @@ public class MemberController {
 		@ApiResponse(responseCode = "401", description = "실패 - 잘못된 이메일 또는 비밀번호입니다."),
 		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
 	})
-	public ResponseEntity<LoginResponse> loginMember(@RequestBody @Valid LoginRequest loginRequest) {
-		return ResponseEntity.ok().body(memberService.loginMember(loginRequest));
+	public ResponseEntity<LoginResponse> loginMember(
+		HttpServletResponse httpServletResponse,
+		@RequestBody @Valid LoginRequest loginRequest) {
+
+		return ResponseEntity.ok().body(memberService.loginMember(httpServletResponse, loginRequest));
+	}
+
+	@GetMapping("/members/{memberId}")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(
+		summary = "회원 정보 조회 API",
+		description = "사용자의 닉네임, 소개글, 프로필 이미지 정보를 조회합니다."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "성공 - 회원 정보 조회, 회원 정보가 반환됩니다."),
+		@ApiResponse(responseCode = "400", description = "실패 - 잘못된 요청, 필수 입력값이 누락되었거나 형식이 올바르지 않습니다."),
+		@ApiResponse(responseCode = "404", description = "실패 - 회원 ID를 찾을 수 없습니다."),
+		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
+	})
+	public ResponseEntity<MemberInfoResponse> searchMemberInfo(@PathVariable Long memberId) {
+		return ResponseEntity.ok(memberService.searchMemberInfo(memberId));
+	}
+
+	@PutMapping("/members/update")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(
+		summary = "회원 정보 수정 API",
+		description = "사용자가 닉네임, 소개글, 프로필 이미지 정보를 수정합니다."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "성공 - 회원 정보 수정, 회원 정보가 업데이트되었습니다."),
+		@ApiResponse(responseCode = "400", description = "실패 - 잘못된 요청, 필수 입력값이 누락되었거나 형식이 올바르지 않습니다."),
+		@ApiResponse(responseCode = "404", description = "실패 - 해당 회원을 찾을 수 없습니다."),
+		@ApiResponse(responseCode = "409", description = "실패 - 닉네임 중복 또는 다른 충돌이 발생했습니다."),
+		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
+	})
+	public ResponseEntity<String> updateMemberInfo(
+		AuthMember authMember,
+		@Valid @RequestBody(required = false) UpdateMemberRequest updateMemberRequest) {
+
+		memberService.updateMemberInfo(authMember, updateMemberRequest);
+		return ResponseEntity.ok().body("성공적으로 회원 정보가 업데이트되었습니다.");
 	}
 }
