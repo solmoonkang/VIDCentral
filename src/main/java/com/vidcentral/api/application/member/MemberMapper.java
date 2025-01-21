@@ -2,6 +2,7 @@ package com.vidcentral.api.application.member;
 
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.dto.request.SignUpRequest;
+import com.vidcentral.api.dto.response.MemberInfoResponse;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,13 @@ public final class MemberMapper {
 			.email(signUpRequest.email())
 			.password(encodedPassword)
 			.nickname(signUpRequest.nickname())
+			.build();
+	}
+
+	public static MemberInfoResponse toMemberInfoResponse(Member member) {
+		return MemberInfoResponse.builder()
+			.nickname(member.getNickname())
+			.profileImage(member.getProfileImage())
 			.build();
 	}
 }
