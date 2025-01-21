@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vidcentral.api.application.member.MemberService;
+import com.vidcentral.api.dto.request.LoginRequest;
 import com.vidcentral.api.dto.request.SignUpRequest;
+import com.vidcentral.api.dto.response.LoginResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -40,6 +42,22 @@ public class MemberController {
 	})
 	public ResponseEntity<String> signUpMember(@RequestBody @Valid SignUpRequest signUpRequest) {
 		memberService.signUpMember(signUpRequest);
-		return ResponseEntity.ok().body("");
+		return ResponseEntity.ok().body("성공적으로 회원가입이 완료되었습니다.");
+	}
+
+	@PostMapping("/login")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(
+		summary = "로그인 API",
+		description = "사용자가 이메일, 비밀번호를 입력하여 로그인합니다."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "성공 - 로그인, 액세스 토큰과 리프레시 토큰이 반환됩니다."),
+		@ApiResponse(responseCode = "400", description = "실패 - 잘못된 요청, 필수 입력값이 누락되었거나 형식이 올바르지 않습니다."),
+		@ApiResponse(responseCode = "401", description = "실패 - 잘못된 이메일 또는 비밀번호입니다."),
+		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
+	})
+	public ResponseEntity<LoginResponse> loginMember(@RequestBody @Valid LoginRequest loginRequest) {
+		return ResponseEntity.ok().body(memberService.loginMember(loginRequest));
 	}
 }
