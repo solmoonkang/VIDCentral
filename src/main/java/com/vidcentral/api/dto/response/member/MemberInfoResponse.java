@@ -1,4 +1,4 @@
-package com.vidcentral.api.dto.response;
+package com.vidcentral.api.dto.response.member;
 
 import lombok.Builder;
 

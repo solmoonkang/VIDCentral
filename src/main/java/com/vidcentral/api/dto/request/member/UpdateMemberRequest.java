@@ -1,4 +1,4 @@
-package com.vidcentral.api.dto.request;
+package com.vidcentral.api.dto.request.member;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
