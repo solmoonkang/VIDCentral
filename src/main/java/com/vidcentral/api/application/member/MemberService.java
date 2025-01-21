@@ -10,6 +10,7 @@ import com.vidcentral.api.dto.request.LoginRequest;
 import com.vidcentral.api.dto.request.SignUpRequest;
 import com.vidcentral.api.dto.request.TokenRequest;
 import com.vidcentral.api.dto.response.LoginResponse;
+import com.vidcentral.api.dto.response.MemberInfoResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,10 +30,16 @@ public class MemberService {
 
 	@Transactional
 	public LoginResponse loginMember(LoginRequest loginRequest) {
-		final Member loginMember = memberReadService.readMember(loginRequest.email());
-		TokenRequest tokenRequest = authorizationService.issueServiceToken(loginMember.getEmail(), loginMember.getNickname());
+		final Member loginMember = memberReadService.findMember(loginRequest.email());
+		TokenRequest tokenRequest = authorizationService
+			.issueServiceToken(loginMember.getEmail(), loginMember.getNickname());
 		loginMember.updateRefreshToken(tokenRequest.refreshToken());
 
 		return AuthenticationMapper.toLoginResponse(tokenRequest.accessToken(), tokenRequest.refreshToken());
+	}
+
+	public MemberInfoResponse searchMemberInfo(Long memberId) {
+		final Member loginMember = memberReadService.readMember(memberId);
+		return MemberMapper.toMemberInfoResponse(loginMember);
 	}
 }
