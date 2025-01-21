@@ -13,16 +13,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.vidcentral.api.application.member.MemberService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
-import com.vidcentral.api.dto.request.LoginRequest;
-import com.vidcentral.api.dto.request.SignUpRequest;
-import com.vidcentral.api.dto.request.UpdateMemberRequest;
-import com.vidcentral.api.dto.response.LoginResponse;
-import com.vidcentral.api.dto.response.MemberInfoResponse;
+import com.vidcentral.api.dto.request.auth.LoginRequest;
+import com.vidcentral.api.dto.request.member.SignUpRequest;
+import com.vidcentral.api.dto.request.member.UpdateMemberRequest;
+import com.vidcentral.api.dto.response.auth.LoginResponse;
+import com.vidcentral.api.dto.response.member.MemberInfoResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -63,8 +64,11 @@ public class MemberController {
 		@ApiResponse(responseCode = "401", description = "실패 - 잘못된 이메일 또는 비밀번호입니다."),
 		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
 	})
-	public ResponseEntity<LoginResponse> loginMember(@RequestBody @Valid LoginRequest loginRequest) {
-		return ResponseEntity.ok().body(memberService.loginMember(loginRequest));
+	public ResponseEntity<LoginResponse> loginMember(
+		HttpServletResponse httpServletResponse,
+		@RequestBody @Valid LoginRequest loginRequest) {
+
+		return ResponseEntity.ok().body(memberService.loginMember(httpServletResponse, loginRequest));
 	}
 
 	@GetMapping("/members/{memberId}")

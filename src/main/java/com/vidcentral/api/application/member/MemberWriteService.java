@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.member.repository.MemberRepository;
-import com.vidcentral.api.dto.request.SignUpRequest;
-import com.vidcentral.api.dto.request.UpdateMemberRequest;
+import com.vidcentral.api.dto.request.member.SignUpRequest;
+import com.vidcentral.api.dto.request.member.UpdateMemberRequest;
 
 import lombok.RequiredArgsConstructor;
 
