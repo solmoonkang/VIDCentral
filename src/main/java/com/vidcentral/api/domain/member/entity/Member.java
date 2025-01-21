@@ -1,5 +1,9 @@
 package com.vidcentral.api.domain.member.entity;
 
+import static com.vidcentral.global.common.util.GlobalConstant.*;
+import static com.vidcentral.global.common.util.ImageURL.*;
+import static java.util.Objects.*;
+
 import com.vidcentral.global.common.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -33,6 +37,9 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "nickname", nullable = false, unique = true)
 	private String nickname;
 
+	@Column(name = "introduce", length = 50)
+	private String introduce;
+
 	@Column(name = "profile_image", nullable = false)
 	private String profileImage;
 
@@ -40,15 +47,28 @@ public class Member extends BaseTimeEntity {
 	private String refreshToken;
 
 	@Builder
-	private Member(String email, String password, String nickname, String profileImage, String refreshToken) {
+	private Member(String email, String password, String nickname, String refreshToken) {
 		this.email = email;
 		this.password = password;
 		this.nickname = nickname;
-		this.profileImage = profileImage;
+		this.introduce = INTRODUCE_ME;
+		this.profileImage = DEFAULT_IMAGE_DOMAIN + MEMBER_PROFILE_URL;
 		this.refreshToken = refreshToken;
 	}
 
 	public void updateRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
+	}
+
+	public void updateNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+	public void updateIntroduce(String introduce) {
+		this.introduce = requireNonNullElse(introduce, this.introduce);
+	}
+
+	public void updateProfileImageURL(String newProfileImage) {
+		this.profileImage = requireNonNullElse(newProfileImage, this.profileImage);
 	}
 }
