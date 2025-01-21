@@ -2,6 +2,8 @@ package com.vidcentral.api.presentation.member;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +14,7 @@ import com.vidcentral.api.application.member.MemberService;
 import com.vidcentral.api.dto.request.LoginRequest;
 import com.vidcentral.api.dto.request.SignUpRequest;
 import com.vidcentral.api.dto.response.LoginResponse;
+import com.vidcentral.api.dto.response.MemberInfoResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -59,5 +62,16 @@ public class MemberController {
 	})
 	public ResponseEntity<LoginResponse> loginMember(@RequestBody @Valid LoginRequest loginRequest) {
 		return ResponseEntity.ok().body(memberService.loginMember(loginRequest));
+	}
+
+	@GetMapping("/members/{memberId}")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "성공 - 회원 정보 조회, 회원 정보가 반환됩니다."),
+		@ApiResponse(responseCode = "400", description = "실패 - 잘못된 요청, 필수 입력값이 누락되었거나 형식이 올바르지 않습니다."),
+		@ApiResponse(responseCode = "404", description = "실패 - 회원 ID를 찾을 수 없습니다."),
+		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
+	})
+	public ResponseEntity<MemberInfoResponse> searchMemberInfo(@PathVariable Long memberId) {
+		return ResponseEntity.ok(memberService.searchMemberInfo(memberId));
 	}
 }
