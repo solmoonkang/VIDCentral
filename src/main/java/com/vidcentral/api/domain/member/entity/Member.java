@@ -43,21 +43,13 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "profile_image", nullable = false)
 	private String profileImage;
 
-	@Column(name = "refresh_token")
-	private String refreshToken;
-
 	@Builder
-	private Member(String email, String password, String nickname, String refreshToken) {
+	private Member(String email, String password, String nickname) {
 		this.email = email;
 		this.password = password;
 		this.nickname = nickname;
 		this.introduce = INTRODUCE_ME;
 		this.profileImage = DEFAULT_IMAGE_DOMAIN + MEMBER_PROFILE_URL;
-		this.refreshToken = refreshToken;
-	}
-
-	public void updateRefreshToken(String refreshToken) {
-		this.refreshToken = refreshToken;
 	}
 
 	public void updateNickname(String nickname) {
