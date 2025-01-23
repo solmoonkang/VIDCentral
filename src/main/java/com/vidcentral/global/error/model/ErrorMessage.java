@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum ErrorMessage {
 
+	FAILED_INVALID_REQUEST("[❎ ERROR] 잘못된 요청입니다. 입력한 데이터가 유효하지 않습니다."),
 	FAILED_INVALID_PASSWORD("[❎ ERROR] 입력하신 비밀번호는 틀린 비밀번호입니다."),
 	FAILED_INVALID_TOKEN("[❎ ERROR] 유효하지 않은 토큰입니다."),
 	FAILED_INVALID_IMAGE_EXTENSION("[❎ ERROR] 유효하지 않은 이미지 확장자입니다."),
