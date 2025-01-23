@@ -86,10 +86,6 @@ public class JwtProviderService {
 		return token.replaceFirst(BEARER, BLANK).trim();
 	}
 
-	public boolean isAuthenticationRequired(String requestURI) {
-		return !(requestURI.equals(SIGNUP_URI) || requestURI.equals(LOGIN_URI));
-	}
-
 	public AuthMember extractAuthMemberByAccessToken(String accessToken) {
 		final Claims claims = parseClaimsByToken(accessToken);
 		final String memberEmail = claims.get(MEMBER_EMAIL, String.class);
