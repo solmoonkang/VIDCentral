@@ -36,14 +36,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
 		String accessToken = jwtProviderService.extractToken(ACCESS_TOKEN_HEADER, httpServletRequest);
 		String refreshToken = CookieUtils.extractRefreshTokenFromCookies(httpServletRequest);
-		String requestURI = httpServletRequest.getRequestURI();
 
 		try {
-			if (!jwtProviderService.isAuthenticationRequired(requestURI)) {
-				filterChain.doFilter(httpServletRequest, httpServletResponse);
-				return;
-			}
-
 			if (jwtProviderService.isUsable(accessToken)) {
 				setAuthenticate(accessToken);
 				filterChain.doFilter(httpServletRequest, httpServletResponse);
