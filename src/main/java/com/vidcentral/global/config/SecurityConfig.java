@@ -13,17 +13,28 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+
+import com.vidcentral.api.application.auth.JwtProviderService;
+import com.vidcentral.global.auth.filter.AuthenticationFilter;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+	private final JwtProviderService jwtProviderService;
+	private final HandlerExceptionResolver handlerExceptionResolver;
 
 	private static final String[] AUTHENTICATION_REQUEST_ENDPOINTS = {
 		"/api/signup",
 		"/api/login"
 	};
 	private static final String[] MEMBER_INFO_ENDPOINTS = {
-		"/api/members/*"
+		"/api/members/**"
 	};
 
 	@Bean
@@ -41,13 +52,15 @@ public class SecurityConfig {
 	@Bean
 	protected SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.csrf(AbstractHttpConfigurer::disable)
-			.httpBasic(AbstractHttpConfigurer::disable);
+			.httpBasic(AbstractHttpConfigurer::disable)
+			.sessionManagement(session -> session.sessionCreationPolicy(STATELESS));
 
 		httpSecurity.authorizeHttpRequests(auth -> auth
 			.anyRequest().authenticated());
 
-		httpSecurity.sessionManagement(session -> session
-			.sessionCreationPolicy(STATELESS));
+		httpSecurity.addFilterBefore(
+			new AuthenticationFilter(jwtProviderService, handlerExceptionResolver),
+			UsernamePasswordAuthenticationFilter.class);
 
 		return httpSecurity.build();
 	}
