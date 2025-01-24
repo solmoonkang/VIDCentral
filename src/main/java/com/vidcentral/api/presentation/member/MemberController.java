@@ -15,9 +15,10 @@ import com.vidcentral.api.application.member.MemberService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.dto.request.auth.LoginRequest;
 import com.vidcentral.api.dto.request.member.SignUpRequest;
-import com.vidcentral.api.dto.request.member.UpdateMemberRequest;
+import com.vidcentral.api.dto.request.member.UpdateRequest;
 import com.vidcentral.api.dto.response.auth.LoginResponse;
 import com.vidcentral.api.dto.response.member.MemberInfoResponse;
+import com.vidcentral.global.auth.annotation.AuthenticationMember;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -83,7 +84,7 @@ public class MemberController {
 		@ApiResponse(responseCode = "404", description = "실패 - 회원 ID를 찾을 수 없습니다."),
 		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
 	})
-	public ResponseEntity<MemberInfoResponse> searchMemberInfo(@PathVariable Long memberId) {
+	public ResponseEntity<MemberInfoResponse> searchMemberInfo(@PathVariable(required = false) Long memberId) {
 		return ResponseEntity.ok(memberService.searchMemberInfo(memberId));
 	}
 
@@ -101,10 +102,10 @@ public class MemberController {
 		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
 	})
 	public ResponseEntity<String> updateMemberInfo(
-		AuthMember authMember,
-		@Valid @RequestBody(required = false) UpdateMemberRequest updateMemberRequest) {
+		@AuthenticationMember AuthMember authMember,
+		@Valid @RequestBody(required = false) UpdateRequest updateRequest) {
 
-		memberService.updateMemberInfo(authMember, updateMemberRequest);
+		memberService.updateMemberInfo(authMember, updateRequest);
 		return ResponseEntity.ok().body("성공적으로 회원 정보가 업데이트되었습니다.");
 	}
 }
