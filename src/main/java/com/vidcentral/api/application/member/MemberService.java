@@ -8,7 +8,7 @@ import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.dto.request.auth.LoginRequest;
 import com.vidcentral.api.dto.request.member.SignUpRequest;
-import com.vidcentral.api.dto.request.member.UpdateMemberRequest;
+import com.vidcentral.api.dto.request.member.UpdateRequest;
 import com.vidcentral.api.dto.response.auth.LoginResponse;
 import com.vidcentral.api.dto.response.member.MemberInfoResponse;
 
@@ -47,11 +47,11 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void updateMemberInfo(AuthMember authMember, UpdateMemberRequest updateMemberRequest) {
+	public void updateMemberInfo(AuthMember authMember, UpdateRequest updateRequest) {
 		final Member loginMember = memberReadService.findMember(authMember.email());
-		memberReadService.validateNicknameDuplication(updateMemberRequest.nickname());
-		memberReadService.validateProfileImageURLExtension(updateMemberRequest.profileImageURL());
+		memberReadService.validateNicknameDuplication(updateRequest.nickname());
+		memberReadService.validateProfileImageURLExtension(updateRequest.profileImageURL());
 
-		memberWriteService.updateMemberInfo(loginMember, updateMemberRequest);
+		memberWriteService.updateMemberInfo(loginMember, updateRequest);
 	}
 }
