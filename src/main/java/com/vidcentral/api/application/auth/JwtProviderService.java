@@ -106,10 +106,10 @@ public class JwtProviderService {
 			log.warn("[✅ LOGGER] JWT 토큰이 만료되었습니다.");
 		} catch (IllegalArgumentException illegalArgumentException) {
 			log.warn("[✅ LOGGER] JWT 토큰이 존재하지 않습니다.");
-			throw new NotFoundException(FAILED_TOKEN_NOT_FOUND);
+			throw new NotFoundException(FAILED_TOKEN_NOT_FOUND_ERROR);
 		} catch (Exception exception) {
 			log.warn("[✅ LOGGER] 유효하지 않은 토큰입니다.");
-			throw new NotFoundException(FAILED_INVALID_TOKEN);
+			throw new NotFoundException(FAILED_INVALID_TOKEN_ERROR);
 		}
 
 		return false;
@@ -134,13 +134,13 @@ public class JwtProviderService {
 	private void validateRefreshToken(String reGenerateRefreshToken, String savedRefreshToken) {
 		if (!reGenerateRefreshToken.equals(savedRefreshToken)) {
 			log.warn("[✅ LOGGER] 유효하지 않은 리프레시 토큰입니다.");
-			throw new NotFoundException(FAILED_TOKEN_NOT_FOUND);
+			throw new NotFoundException(FAILED_TOKEN_NOT_FOUND_ERROR);
 		}
 	}
 
 	private void validateTokenResponse(TokenSaveResponse tokenSaveResponse) {
 		if (tokenSaveResponse == null || tokenSaveResponse.refreshToken() == null) {
-			throw new NotFoundException(FAILED_UNAUTHORIZED_MEMBER);
+			throw new NotFoundException(FAILED_UNAUTHORIZED_MEMBER_ERROR);
 		}
 	}
 }
