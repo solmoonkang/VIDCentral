@@ -11,8 +11,6 @@ public record UpdateRequest(
 	String nickname,
 
 	@Size(max = 50, message = "소개글은 최대 50자까지 입력이 가능합니다.")
-	String introduce,
-
-	String profileImageURL
+	String introduce
 ) {
 }
