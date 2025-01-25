@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.vidcentral.api.application.member.MemberService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
@@ -103,9 +105,10 @@ public class MemberController {
 	})
 	public ResponseEntity<String> updateMemberInfo(
 		@AuthenticationMember AuthMember authMember,
-		@Valid @RequestBody(required = false) UpdateRequest updateRequest) {
+		@Valid @RequestPart(required = false) UpdateRequest updateRequest,
+		@RequestPart(name = "profileImageURL") MultipartFile newProfileImageURL) {
 
-		memberService.updateMemberInfo(authMember, updateRequest);
+		memberService.updateMemberInfo(authMember, updateRequest, newProfileImageURL);
 		return ResponseEntity.ok().body("성공적으로 회원 정보가 업데이트되었습니다.");
 	}
 }
