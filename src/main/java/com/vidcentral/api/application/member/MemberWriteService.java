@@ -21,9 +21,9 @@ public class MemberWriteService {
 		memberRepository.save(MemberMapper.toMember(signUpRequest, passwordEncoder.encode(signUpRequest.password())));
 	}
 
-	public void updateMemberInfo(Member member, UpdateRequest updateRequest) {
+	public void changeMemberInfo(Member member, UpdateRequest updateRequest, String newProfileImageURL) {
 		member.updateIntroduce(updateRequest.introduce());
-		member.updateProfileImageURL(updateRequest.profileImageURL());
 		member.updateNickname(updateRequest.nickname());
+		member.updateProfileImageURL(newProfileImageURL);
 	}
 }

@@ -1,9 +1,15 @@
 package com.vidcentral.api.application.member;
 
+import static com.vidcentral.api.domain.image.ImageProperties.*;
+
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.vidcentral.api.application.auth.AuthorizationService;
+import com.vidcentral.api.application.image.ImageService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.dto.request.auth.LoginRequest;
@@ -23,6 +29,7 @@ public class MemberService {
 	private final MemberWriteService memberWriteService;
 	private final MemberReadService memberReadService;
 	private final AuthorizationService authorizationService;
+	private final ImageService imageService;
 
 	@Transactional
 	public void signUpMember(SignUpRequest signUpRequest) {
@@ -47,11 +54,11 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void updateMemberInfo(AuthMember authMember, UpdateRequest updateRequest) {
+	public void updateMemberInfo(AuthMember authMember, UpdateRequest updateRequest, MultipartFile profileImageURL) {
 		final Member loginMember = memberReadService.findMember(authMember.email());
 		memberReadService.validateNicknameDuplication(updateRequest.nickname());
-		memberReadService.validateProfileImageURLExtension(updateRequest.profileImageURL());
 
-		memberWriteService.updateMemberInfo(loginMember, updateRequest);
+		String newProfileImageURL = imageService.uploadImages(List.of(profileImageURL), PROFILE_IMAGE).get(0);
+		memberWriteService.changeMemberInfo(loginMember, updateRequest, newProfileImageURL);
 	}
 }
