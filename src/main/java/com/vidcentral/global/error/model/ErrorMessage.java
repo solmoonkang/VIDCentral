@@ -12,6 +12,7 @@ public enum ErrorMessage {
 	FAILED_INVALID_PASSWORD_ERROR("[❎ ERROR] 입력하신 비밀번호는 틀린 비밀번호입니다."),
 	FAILED_INVALID_TOKEN_ERROR("[❎ ERROR] 유효하지 않은 토큰입니다."),
 	FAILED_INVALID_IMAGE_EXTENSION_ERROR("[❎ ERROR] 유효하지 않은 이미지 확장자입니다."),
+	FAILED_INVALID_VIDEO_ERROR("[❎ ERROR] 유효하지 않은 비디오 파일입니다."),
 	FAILED_S3_RESIZE_ERROR("[❎ ERROR] S3 이미지 리사이즈에 실패했습니다."),
 	FAILED_UNAUTHORIZED_MEMBER_ERROR("[❎ ERROR] 해당 사용자는 인증되지 않은 사용자입니다."),
 	FAILED_EMAIL_DUPLICATION_ERROR("[❎ ERROR] 입력하신 이메일은 이미 존재하는 이메일입니다."),
