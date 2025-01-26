@@ -40,8 +40,8 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "introduce", length = 50)
 	private String introduce;
 
-	@Column(name = "profile_image", nullable = false)
-	private String profileImage;
+	@Column(name = "profile_image_url", nullable = false)
+	private String profileImageURL;
 
 	@Builder
 	private Member(String email, String password, String nickname) {
@@ -49,7 +49,7 @@ public class Member extends BaseTimeEntity {
 		this.password = password;
 		this.nickname = nickname;
 		this.introduce = INTRODUCE_ME;
-		this.profileImage = IMAGE_DOMAIN + MEMBER_PROFILE_URL;
+		this.profileImageURL = IMAGE_DOMAIN + MEMBER_PROFILE_URL;
 	}
 
 	public void updateNickname(String nickname) {
@@ -60,7 +60,7 @@ public class Member extends BaseTimeEntity {
 		this.introduce = requireNonNullElse(introduce, this.introduce);
 	}
 
-	public void updateProfileImageURL(String newProfileImage) {
-		this.profileImage = requireNonNullElse(newProfileImage, this.profileImage);
+	public void updateProfileImageURL(String newProfileImageURL) {
+		this.profileImageURL = requireNonNullElse(newProfileImageURL, this.profileImageURL);
 	}
 }
