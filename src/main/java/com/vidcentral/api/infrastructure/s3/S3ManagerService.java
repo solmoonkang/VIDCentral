@@ -24,7 +24,7 @@ public class S3ManagerService {
 	@Value("${cloud.aws.cloudfront.domain}")
 	private String cloudFrontURL;
 
-	public String uploadImageFile(String key, MultipartFile multipartFile) {
+	public String uploadFile(String key, MultipartFile multipartFile) {
 		try {
 			PutObjectRequest putObjectRequest = PutObjectRequest.builder()
 				.bucket(bucketName)
@@ -32,7 +32,8 @@ public class S3ManagerService {
 				.contentType(multipartFile.getContentType())
 				.build();
 
-			s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(multipartFile.getInputStream(), multipartFile.getSize()));
+			s3Client.putObject(putObjectRequest,
+				RequestBody.fromInputStream(multipartFile.getInputStream(), multipartFile.getSize()));
 
 			return cloudFrontURL + key;
 		} catch (IOException e) {
@@ -40,7 +41,7 @@ public class S3ManagerService {
 		}
 	}
 
-	public void deleteImageFile(String objectURL) {
+	public void deleteFile(String objectURL) {
 		String key = objectURL.replace(cloudFrontURL, "");
 
 		DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
