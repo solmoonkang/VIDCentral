@@ -38,14 +38,14 @@ public class Video extends BaseTimeEntity {
 	@Column(name = "description", nullable = false)
 	private String description;
 
-	@Column(name = "file_path", nullable = false)
-	private String filePath;
+	@Column(name = "video_url", nullable = false)
+	private String videoURL;
 
 	@Builder
-	private Video(Member member, String title, String description, String filePath) {
+	private Video(Member member, String title, String description, String videoURL) {
 		this.member = member;
 		this.title = title;
 		this.description = description;
-		this.filePath = filePath;
+		this.videoURL = videoURL;
 	}
 }
