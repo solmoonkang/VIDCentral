@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.vidcentral.api.application.auth.AuthorizationService;
-import com.vidcentral.api.application.image.ImageService;
+import com.vidcentral.api.application.media.MediaService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.dto.request.auth.LoginRequest;
@@ -29,7 +29,7 @@ public class MemberService {
 	private final MemberWriteService memberWriteService;
 	private final MemberReadService memberReadService;
 	private final AuthorizationService authorizationService;
-	private final ImageService imageService;
+	private final MediaService mediaService;
 
 	@Transactional
 	public void signUpMember(SignUpRequest signUpRequest) {
@@ -58,7 +58,7 @@ public class MemberService {
 		final Member loginMember = memberReadService.findMember(authMember.email());
 		memberReadService.validateNicknameDuplication(updateRequest.nickname());
 
-		String newProfileImageURL = imageService.uploadImages(List.of(profileImageURL), PROFILE_IMAGE).get(0);
+		String newProfileImageURL = mediaService.uploadImages(List.of(profileImageURL), PROFILE_IMAGE).get(0);
 		memberWriteService.changeMemberInfo(loginMember, updateRequest, newProfileImageURL);
 	}
 }
