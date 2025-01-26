@@ -49,7 +49,7 @@ public class Member extends BaseTimeEntity {
 		this.password = password;
 		this.nickname = nickname;
 		this.introduce = INTRODUCE_ME;
-		this.profileImage = DEFAULT_IMAGE_DOMAIN + MEMBER_PROFILE_URL;
+		this.profileImage = IMAGE_DOMAIN + MEMBER_PROFILE_URL;
 	}
 
 	public void updateNickname(String nickname) {

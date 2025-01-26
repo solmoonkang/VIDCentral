@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 public class GlobalConstant {
 
 	public static final String BLANK = "";
+	public static final String DELIMITER = "/";
 
 	public static final String INTRODUCE_ME = "본인 소개에 대한 내용을 작성해주세요.";
 
-	public static final String SIGNUP_URI = "/api/signup";
-	public static final String LOGIN_URI = "/api/login";
+	public static final String IMAGE_EXTENSION = ".png";
 }
