@@ -15,7 +15,7 @@ public class VideoMapper {
 			.member(member)
 			.title(uploadVideoRequest.title())
 			.description(uploadVideoRequest.description())
-			.filePath(videoURL)
+			.videoURL(videoURL)
 			.build();
 	}
 }
