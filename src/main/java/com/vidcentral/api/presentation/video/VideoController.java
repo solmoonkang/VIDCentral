@@ -4,6 +4,7 @@ import java.net.URI;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,7 +55,7 @@ public class VideoController {
 		return ResponseEntity.created(URI.create(uploadVideo.getVideoURL())).body(uploadVideo);
 	}
 
-	@PutMapping("/update")
+	@PutMapping("/update/{videoId}")
 	@ResponseStatus(HttpStatus.OK)
 	@Operation(
 		summary = "비디오 수정 API",
@@ -69,10 +70,11 @@ public class VideoController {
 	})
 	public ResponseEntity<String> updateVideo(
 		@AuthenticationMember AuthMember authMember,
+		@PathVariable Long videoId,
 		@Valid @RequestPart(required = false) UpdateVideoRequest updateVideoRequest,
 		@RequestPart(name = "videoURL") MultipartFile newVideoURL) {
 
-		videoService.updateVideo(authMember, updateVideoRequest, newVideoURL);
+		videoService.updateVideo(authMember, videoId, updateVideoRequest, newVideoURL);
 		return ResponseEntity.ok().body("성공적으로 비디오 정보를 업데이트했습니다.");
 	}
 }
