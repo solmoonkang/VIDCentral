@@ -25,6 +25,7 @@ public class VideoService {
 	private final MediaService mediaService;
 	private final MemberReadService memberReadService;
 	private final VideoWriteService videoWriteService;
+	private final VideoReadService videoReadService;
 	private final VideoRepository videoRepository;
 
 	@Transactional
@@ -37,11 +38,23 @@ public class VideoService {
 	}
 
 	@Transactional
-	public void updateVideo(AuthMember authMember, UpdateVideoRequest updateVideoRequest, MultipartFile videoURL) {
+	public void updateVideo(AuthMember authMember, Long videoId, UpdateVideoRequest updateVideoRequest,
+		MultipartFile videoURL) {
 		final Member loginMember = memberReadService.findMember(authMember.email());
-		final Video video = VideoMapper.toVideo(loginMember, updateVideoRequest, videoURL.getOriginalFilename());
+		final Video video = videoReadService.findVideo(videoId);
+		videoReadService.validateMemberHasAccess(video.getMember().getEmail(), loginMember.getEmail());
 
 		final String newVideoURL = mediaService.uploadVideo(videoURL, DEFAULT_VIDEO);
 		videoWriteService.updateVideo(video, updateVideoRequest, newVideoURL);
+	}
+
+	@Transactional
+	public void deleteVideo(AuthMember authMember, Long videoId) {
+		final Member loginMember = memberReadService.findMember(authMember.email());
+		final Video video = videoReadService.findVideo(videoId);
+		videoReadService.validateMemberHasAccess(video.getMember().getEmail(), loginMember.getEmail());
+
+		mediaService.deleteVideo(video.getVideoURL());
+		videoRepository.delete(video);
 	}
 }
