@@ -12,6 +12,7 @@ import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.domain.video.repository.VideoRepository;
+import com.vidcentral.api.dto.request.video.UpdateVideoRequest;
 import com.vidcentral.api.dto.request.video.UploadVideoRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class VideoService {
 
 	private final MediaService mediaService;
 	private final MemberReadService memberReadService;
+	private final VideoWriteService videoWriteService;
 	private final VideoRepository videoRepository;
 
 	@Transactional
@@ -32,5 +34,14 @@ public class VideoService {
 		final Video video = VideoMapper.toVideo(loginMember, uploadVideoRequest, videoURL);
 
 		return videoRepository.save(video);
+	}
+
+	@Transactional
+	public void updateVideo(AuthMember authMember, UpdateVideoRequest updateVideoRequest, MultipartFile videoURL) {
+		final Member loginMember = memberReadService.findMember(authMember.email());
+		final Video video = VideoMapper.toVideo(loginMember, updateVideoRequest, videoURL.getOriginalFilename());
+
+		final String newVideoURL = mediaService.uploadVideo(videoURL, DEFAULT_VIDEO);
+		videoWriteService.updateVideo(video, updateVideoRequest, newVideoURL);
 	}
 }
