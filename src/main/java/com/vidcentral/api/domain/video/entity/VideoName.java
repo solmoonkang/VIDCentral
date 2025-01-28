@@ -21,7 +21,7 @@ public class VideoName {
 	public static VideoName createFromMultipartFile(MultipartFile multipartFile, VideoProperties videoProperties) {
 		return switch (videoProperties) {
 			case DEFAULT_VIDEO ->
-				new VideoName(VIDEO_PATH + multipartFile.getName() + "_" + UUID.randomUUID() + VIDEO_EXTENSION);
+				new VideoName(VIDEO_PATH + multipartFile.getOriginalFilename() + "_" + UUID.randomUUID() + VIDEO_EXTENSION);
 		};
 	}
 }
