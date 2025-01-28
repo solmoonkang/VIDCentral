@@ -1,5 +1,7 @@
 package com.vidcentral.api.domain.video.entity;
 
+import static java.util.Objects.*;
+
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.global.common.entity.BaseTimeEntity;
 
@@ -47,5 +49,17 @@ public class Video extends BaseTimeEntity {
 		this.title = title;
 		this.description = description;
 		this.videoURL = videoURL;
+	}
+
+	public void updateTitle(String title) {
+		this.title = requireNonNullElse(title, this.title);
+	}
+
+	public void updateDescription(String description) {
+		this.description = requireNonNullElse(description, this.description);
+	}
+
+	public void updateVideoURL(String newVideoURL) {
+		this.videoURL = requireNonNullElse(newVideoURL, this.videoURL);
 	}
 }
