@@ -51,7 +51,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 				return;
 			}
 
-			throw new NotFoundException(FAILED_TOKEN_NOT_FOUND);
+			throw new NotFoundException(FAILED_TOKEN_NOT_FOUND_ERROR);
 		} catch (Exception exception) {
 			log.warn("[✅ LOGGER] JWT 에러 상세 설명: {}", exception.getMessage());
 			handlerExceptionResolver.resolveException(httpServletRequest, httpServletResponse, null, exception);
