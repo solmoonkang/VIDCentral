@@ -1,10 +1,12 @@
 package com.vidcentral.api.presentation.video;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,6 +21,7 @@ import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.dto.request.video.UpdateVideoRequest;
 import com.vidcentral.api.dto.request.video.UploadVideoRequest;
+import com.vidcentral.api.dto.response.video.VideoInfoResponse;
 import com.vidcentral.global.auth.annotation.AuthenticationMember;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,7 +31,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/video")
+@RequestMapping("/api/videos")
 @RequiredArgsConstructor
 public class VideoController {
 
@@ -54,6 +57,22 @@ public class VideoController {
 
 		Video uploadVideo = videoService.uploadVideo(authMember, uploadVideoRequest, newVideoURL);
 		return ResponseEntity.created(URI.create(uploadVideo.getVideoURL())).body(uploadVideo);
+	}
+
+	@GetMapping
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(
+		summary = "모든 비디오 조회 API",
+		description = "모든 비디오 제목, 설명, 파일을 조회합니다."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "성공 - 모든 비디오 조회, 모든 비디오 정보를 조회했습니다.."),
+		@ApiResponse(responseCode = "404", description = "실패 - 해당 회원을 찾을 수 없습니다."),
+		@ApiResponse(responseCode = "409", description = "실패 - 유효하지 않은 비디오 파일입니다."),
+		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
+	})
+	public ResponseEntity<List<VideoInfoResponse>> searchAllVideos() {
+		return ResponseEntity.ok().body(videoService.searchAllVideos());
 	}
 
 	@PutMapping("/update/{videoId}")
