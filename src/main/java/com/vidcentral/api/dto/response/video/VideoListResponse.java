@@ -3,10 +3,10 @@ package com.vidcentral.api.dto.response.video;
 import lombok.Builder;
 
 @Builder
-public record VideoInfoResponse(
+public record VideoListResponse(
 	String nickname,
 	String title,
-	String description,
-	String videoURL
+	String videoURL,
+	Long views
 ) {
 }
