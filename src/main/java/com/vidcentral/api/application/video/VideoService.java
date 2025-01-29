@@ -18,6 +18,7 @@ import com.vidcentral.api.dto.request.video.UpdateVideoRequest;
 import com.vidcentral.api.dto.request.video.UploadVideoRequest;
 import com.vidcentral.api.dto.response.video.VideoDetailResponse;
 import com.vidcentral.api.dto.response.video.VideoListResponse;
+import com.vidcentral.api.dto.response.viewHistory.ViewHistoryListResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -56,6 +57,10 @@ public class VideoService {
 		videoReadService.saveViewHistory(authMember, video, anonymousId);
 		videoWriteService.incrementVideoViews(video);
 		return VideoMapper.toVideoDetailsResponse(video);
+	}
+
+	public List<ViewHistoryListResponse> searchAllViewHistory(AuthMember authMember, String anonymousId) {
+		return videoReadService.searchAllViewHistory(authMember, anonymousId);
 	}
 
 	@Transactional
