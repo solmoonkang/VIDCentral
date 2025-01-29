@@ -2,11 +2,18 @@ package com.vidcentral.api.domain.video.entity;
 
 import static java.util.Objects.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.global.common.entity.BaseTimeEntity;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -43,12 +50,22 @@ public class Video extends BaseTimeEntity {
 	@Column(name = "video_url", nullable = false)
 	private String videoURL;
 
+	@Column(name = "views", nullable = false)
+	private Long views = 0L;
+
+	@ElementCollection(targetClass = VideoTag.class)
+	@CollectionTable(name = "video_tags", joinColumns = @JoinColumn(name = "video_id"))
+	@Column(name = "video_tags")
+	@Enumerated(EnumType.STRING)
+	private List<VideoTag> videoTags = new ArrayList<>();
+
 	@Builder
-	private Video(Member member, String title, String description, String videoURL) {
+	private Video(Member member, String title, String description, String videoURL, List<VideoTag> videoTags) {
 		this.member = member;
 		this.title = title;
 		this.description = description;
 		this.videoURL = videoURL;
+		this.videoTags = videoTags;
 	}
 
 	public void updateTitle(String title) {
@@ -61,5 +78,13 @@ public class Video extends BaseTimeEntity {
 
 	public void updateVideoURL(String newVideoURL) {
 		this.videoURL = requireNonNullElse(newVideoURL, this.videoURL);
+	}
+
+	public void updateVideoTags(List<VideoTag> videoTags) {
+		this.videoTags = requireNonNullElse(videoTags, this.videoTags);
+	}
+
+	public void incrementViews() {
+		this.views++;
 	}
 }

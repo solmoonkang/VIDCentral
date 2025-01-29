@@ -34,7 +34,8 @@ public class SecurityConfig {
 		"/api/login"
 	};
 	private static final String[] MEMBER_INFO_ENDPOINTS = {
-		"/api/members/**"
+		"/api/members/**",
+		"/api/videos/**"
 	};
 
 	@Bean
