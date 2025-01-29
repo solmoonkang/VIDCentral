@@ -21,7 +21,8 @@ import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.dto.request.video.UpdateVideoRequest;
 import com.vidcentral.api.dto.request.video.UploadVideoRequest;
-import com.vidcentral.api.dto.response.video.VideoInfoResponse;
+import com.vidcentral.api.dto.response.video.VideoDetailResponse;
+import com.vidcentral.api.dto.response.video.VideoListResponse;
 import com.vidcentral.global.auth.annotation.AuthenticationMember;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -71,7 +72,7 @@ public class VideoController {
 		@ApiResponse(responseCode = "409", description = "실패 - 유효하지 않은 비디오 파일입니다."),
 		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
 	})
-	public ResponseEntity<List<VideoInfoResponse>> searchAllVideos() {
+	public ResponseEntity<List<VideoListResponse>> searchAllVideos() {
 		return ResponseEntity.ok().body(videoService.searchAllVideos());
 	}
 
@@ -87,7 +88,7 @@ public class VideoController {
 		@ApiResponse(responseCode = "409", description = "실패 - 유효하지 않은 비디오 파일입니다."),
 		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
 	})
-	public ResponseEntity<VideoInfoResponse> searchVideo(@PathVariable Long videoId) {
+	public ResponseEntity<VideoDetailResponse> searchVideo(@PathVariable Long videoId) {
 		return ResponseEntity.ok().body(videoService.searchVideo(videoId));
 	}
 
