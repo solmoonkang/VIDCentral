@@ -3,9 +3,14 @@ package com.vidcentral.api.application.video;
 import static com.vidcentral.global.error.model.ErrorMessage.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.vidcentral.api.application.member.MemberReadService;
+import com.vidcentral.api.application.viewHistory.SessionViewHistoryService;
+import com.vidcentral.api.application.viewHistory.ViewHistoryService;
+import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.domain.video.entity.VideoTag;
 import com.vidcentral.api.domain.video.repository.VideoRepository;
@@ -21,6 +26,9 @@ public class VideoReadService {
 	private static final int MAX_TAG_COUNT = 3;
 
 	private final VideoRepository videoRepository;
+	private final MemberReadService memberReadService;
+	private final ViewHistoryService viewHistoryService;
+	private final SessionViewHistoryService sessionViewHistoryService;
 
 	public Video findVideo(Long videoId) {
 		return videoRepository.findById(videoId)
@@ -29,6 +37,15 @@ public class VideoReadService {
 
 	public List<Video> findAllVideos() {
 		return videoRepository.findAll();
+	}
+
+	public void saveViewHistory(AuthMember authMember, Video video, String anonymousId) {
+		Optional.ofNullable(authMember)
+			.map(loginMember -> memberReadService.findMember(loginMember.email()))
+			.ifPresentOrElse(
+				loginMember -> viewHistoryService.saveViewHistory(loginMember, video),
+				() -> sessionViewHistoryService.addSessionViewHistory(anonymousId, video)
+			);
 	}
 
 	public void validateMemberHasAccess(String videoOwnerEmail, String authMemberEmail) {
