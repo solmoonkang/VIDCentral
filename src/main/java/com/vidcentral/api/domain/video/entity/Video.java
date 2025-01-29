@@ -83,4 +83,8 @@ public class Video extends BaseTimeEntity {
 	public void updateVideoTags(List<VideoTag> videoTags) {
 		this.videoTags = requireNonNullElse(videoTags, this.videoTags);
 	}
+
+	public void incrementViews() {
+		this.views++;
+	}
 }
