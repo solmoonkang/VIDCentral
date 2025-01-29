@@ -51,9 +51,10 @@ public class VideoService {
 			.toList();
 	}
 
-	public VideoDetailResponse searchVideo(Long videoId) {
+	public VideoDetailResponse searchVideo(AuthMember authMember, Long videoId, String anonymousId) {
 		final Video video = videoReadService.findVideo(videoId);
-		video.incrementViews();
+		videoReadService.saveViewHistory(authMember, video, anonymousId);
+		videoWriteService.incrementVideoViews(video);
 		return VideoMapper.toVideoDetailsResponse(video);
 	}
 
