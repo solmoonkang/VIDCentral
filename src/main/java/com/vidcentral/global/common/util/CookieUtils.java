@@ -1,5 +1,6 @@
 package com.vidcentral.global.common.util;
 
+import static com.vidcentral.global.common.util.GlobalConstant.*;
 import static com.vidcentral.global.common.util.TokenConstant.*;
 
 import jakarta.servlet.http.Cookie;
@@ -13,9 +14,18 @@ public class CookieUtils {
 		Cookie refreshTokenCookie = new Cookie(refreshTokenName, token);
 		refreshTokenCookie.setMaxAge(COOKIE_MAX_AGE);
 		refreshTokenCookie.setHttpOnly(true);
-		refreshTokenCookie.setPath("/");
+		refreshTokenCookie.setPath(DELIMITER);
 
 		return refreshTokenCookie;
+	}
+
+	public static Cookie generateAnonymousIdCookie(String anonymousIdName, String id) {
+		Cookie anonymousCookie = new Cookie(anonymousIdName, id);
+		anonymousCookie.setMaxAge(COOKIE_MAX_AGE);
+		anonymousCookie.setHttpOnly(true);
+		anonymousCookie.setPath(DELIMITER);
+
+		return anonymousCookie;
 	}
 
 	public static String extractRefreshTokenFromCookies(HttpServletRequest httpServletRequest) {
@@ -33,7 +43,7 @@ public class CookieUtils {
 		Cookie refreshTokenCookie = new Cookie(refreshTokenName, null);
 		refreshTokenCookie.setMaxAge(0);
 		refreshTokenCookie.setHttpOnly(true);
-		refreshTokenCookie.setPath("/");
+		refreshTokenCookie.setPath(DELIMITER);
 
 		return refreshTokenCookie;
 	}
