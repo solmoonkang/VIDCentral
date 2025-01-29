@@ -25,6 +25,7 @@ import com.vidcentral.api.dto.request.video.UpdateVideoRequest;
 import com.vidcentral.api.dto.request.video.UploadVideoRequest;
 import com.vidcentral.api.dto.response.video.VideoDetailResponse;
 import com.vidcentral.api.dto.response.video.VideoListResponse;
+import com.vidcentral.api.dto.response.viewHistory.ViewHistoryListResponse;
 import com.vidcentral.global.auth.annotation.AuthenticationMember;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -71,13 +72,32 @@ public class VideoController {
 		description = "모든 비디오 제목, 설명, 파일을 조회합니다."
 	)
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "성공 - 모든 비디오 조회, 모든 비디오 정보를 조회했습니다.."),
+		@ApiResponse(responseCode = "200", description = "성공 - 모든 비디오 조회, 모든 비디오 정보를 조회했습니다."),
 		@ApiResponse(responseCode = "404", description = "실패 - 해당 회원을 찾을 수 없습니다."),
 		@ApiResponse(responseCode = "409", description = "실패 - 유효하지 않은 비디오 파일입니다."),
 		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
 	})
 	public ResponseEntity<List<VideoListResponse>> searchAllVideos() {
 		return ResponseEntity.ok().body(videoService.searchAllVideos());
+	}
+
+	@GetMapping("/view-history")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(
+		summary = "모든 비디오 시청 기록 조회 API",
+		description = "모든 비디오 제목, 설명, 파일, 조회수, 시청 시간을 조회합니다."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "성공 - 모든 비디오 시청 기록 조회, 모든 비디오 시청 기록을 조회했습니다."),
+		@ApiResponse(responseCode = "404", description = "실패 - 해당 회원을 찾을 수 없습니다."),
+		@ApiResponse(responseCode = "409", description = "실패 - 유효하지 않은 비디오 파일입니다."),
+		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
+	})
+	public ResponseEntity<List<ViewHistoryListResponse>> searchAllViewHistory(
+		@AuthenticationMember AuthMember authMember,
+		@CookieValue(value = "anonymousId", defaultValue = "") String anonymousId) {
+
+		return ResponseEntity.ok().body(videoService.searchAllViewHistory(authMember, anonymousId));
 	}
 
 	@GetMapping("/{videoId}")
