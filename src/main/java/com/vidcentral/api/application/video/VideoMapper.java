@@ -3,6 +3,7 @@ package com.vidcentral.api.application.video;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.dto.request.video.UploadVideoRequest;
+import com.vidcentral.api.dto.response.video.VideoInfoResponse;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,15 @@ public class VideoMapper {
 			.title(uploadVideoRequest.title())
 			.description(uploadVideoRequest.description())
 			.videoURL(videoURL)
+			.build();
+	}
+
+	public static VideoInfoResponse toVideoInfoResponse(Video video) {
+		return VideoInfoResponse.builder()
+			.nickname(video.getMember().getNickname())
+			.title(video.getTitle())
+			.description(video.getDescription())
+			.videoURL(video.getVideoURL())
 			.build();
 	}
 }
