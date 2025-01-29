@@ -17,4 +17,8 @@ public class VideoWriteService {
 		video.updateVideoURL(newVideoURL);
 		video.updateVideoTags(updateVideoRequest.videoTags());
 	}
+
+	public void incrementVideoViews(Video video) {
+		video.incrementViews();
+	}
 }
