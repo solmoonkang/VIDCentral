@@ -16,7 +16,8 @@ import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.domain.video.repository.VideoRepository;
 import com.vidcentral.api.dto.request.video.UpdateVideoRequest;
 import com.vidcentral.api.dto.request.video.UploadVideoRequest;
-import com.vidcentral.api.dto.response.video.VideoInfoResponse;
+import com.vidcentral.api.dto.response.video.VideoDetailResponse;
+import com.vidcentral.api.dto.response.video.VideoListResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -42,7 +43,7 @@ public class VideoService {
 		return videoRepository.save(video);
 	}
 
-	public List<VideoInfoResponse> searchAllVideos() {
+	public List<VideoListResponse> searchAllVideos() {
 		List<Video> videoList = videoReadService.findAllVideos();
 
 		return videoList.stream()
@@ -50,9 +51,10 @@ public class VideoService {
 			.toList();
 	}
 
-	public VideoInfoResponse searchVideo(Long videoId) {
+	public VideoDetailResponse searchVideo(Long videoId) {
 		final Video video = videoReadService.findVideo(videoId);
-		return VideoMapper.toVideoInfoResponse(video);
+		video.incrementViews();
+		return VideoMapper.toVideoDetailsResponse(video);
 	}
 
 	@Transactional
