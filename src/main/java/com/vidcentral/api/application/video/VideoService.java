@@ -48,6 +48,11 @@ public class VideoService {
 			.toList();
 	}
 
+	public VideoInfoResponse searchVideo(Long videoId) {
+		final Video video = videoReadService.findVideo(videoId);
+		return VideoMapper.toVideoInfoResponse(video);
+	}
+
 	@Transactional
 	public void updateVideo(AuthMember authMember, Long videoId, UpdateVideoRequest updateVideoRequest, MultipartFile videoURL) {
 		final Member loginMember = memberReadService.findMember(authMember.email());
