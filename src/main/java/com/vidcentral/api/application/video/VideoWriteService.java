@@ -15,5 +15,6 @@ public class VideoWriteService {
 		video.updateTitle(updateVideoRequest.title());
 		video.updateDescription(updateVideoRequest.description());
 		video.updateVideoURL(newVideoURL);
+		video.updateVideoTags(updateVideoRequest.videoTags());
 	}
 }
