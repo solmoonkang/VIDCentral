@@ -59,7 +59,9 @@ public class VideoService {
 	public void updateVideo(AuthMember authMember, Long videoId, UpdateVideoRequest updateVideoRequest, MultipartFile videoURL) {
 		final Member loginMember = memberReadService.findMember(authMember.email());
 		final Video video = videoReadService.findVideo(videoId);
+
 		videoReadService.validateMemberHasAccess(video.getMember().getEmail(), loginMember.getEmail());
+		videoReadService.validateTagCount(updateVideoRequest.videoTags());
 
 		final String newVideoURL = mediaService.uploadVideo(videoURL, DEFAULT_VIDEO);
 		videoWriteService.updateVideo(video, updateVideoRequest, newVideoURL);
