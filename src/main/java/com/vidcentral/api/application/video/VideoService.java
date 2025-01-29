@@ -35,6 +35,8 @@ public class VideoService {
 	public Video uploadVideo(AuthMember authMember, UploadVideoRequest uploadVideoRequest, MultipartFile newVideoURL) {
 		final String videoURL = mediaService.uploadVideo(newVideoURL, DEFAULT_VIDEO);
 		final Member loginMember = memberReadService.findMember(authMember.email());
+
+		videoReadService.validateTagCount(uploadVideoRequest.videoTags());
 		final Video video = VideoMapper.toVideo(loginMember, uploadVideoRequest, videoURL);
 
 		return videoRepository.save(video);
