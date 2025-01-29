@@ -17,6 +17,7 @@ public class VideoMapper {
 			.title(uploadVideoRequest.title())
 			.description(uploadVideoRequest.description())
 			.videoURL(videoURL)
+			.videoTags(uploadVideoRequest.videoTags())
 			.build();
 	}
 
