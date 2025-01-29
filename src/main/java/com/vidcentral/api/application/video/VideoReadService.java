@@ -2,6 +2,8 @@ package com.vidcentral.api.application.video;
 
 import static com.vidcentral.global.error.model.ErrorMessage.*;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.vidcentral.api.domain.video.entity.Video;
@@ -20,6 +22,10 @@ public class VideoReadService {
 	public Video findVideo(Long videoId) {
 		return videoRepository.findById(videoId)
 			.orElseThrow(() -> new NotFoundException(FAILED_VIDEO_NOT_FOUND_ERROR));
+	}
+
+	public List<Video> findAllVideos() {
+		return videoRepository.findAll();
 	}
 
 	public void validateMemberHasAccess(String videoOwnerEmail, String authMemberEmail) {
