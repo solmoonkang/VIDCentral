@@ -14,6 +14,7 @@ import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.domain.video.entity.VideoTag;
 import com.vidcentral.api.domain.video.repository.VideoRepository;
+import com.vidcentral.api.dto.response.viewHistory.ViewHistoryListResponse;
 import com.vidcentral.global.error.exception.BadRequestException;
 import com.vidcentral.global.error.exception.NotFoundException;
 
@@ -46,6 +47,12 @@ public class VideoReadService {
 				loginMember -> viewHistoryService.saveViewHistory(loginMember, video),
 				() -> sessionViewHistoryService.addSessionViewHistory(anonymousId, video)
 			);
+	}
+
+	public List<ViewHistoryListResponse> searchAllViewHistory(AuthMember authMember, String anonymousId) {
+		return Optional.ofNullable(authMember)
+			.map(viewHistoryService::searchAllViewHistoryForLoggedInMember)
+			.orElseGet(() -> viewHistoryService.searchAllViewHistoryForAnonymousMember(anonymousId));
 	}
 
 	public void validateMemberHasAccess(String videoOwnerEmail, String authMemberEmail) {
