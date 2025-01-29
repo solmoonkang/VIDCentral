@@ -2,6 +2,8 @@ package com.vidcentral.api.application.video;
 
 import static com.vidcentral.api.domain.video.entity.VideoProperties.*;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +16,7 @@ import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.domain.video.repository.VideoRepository;
 import com.vidcentral.api.dto.request.video.UpdateVideoRequest;
 import com.vidcentral.api.dto.request.video.UploadVideoRequest;
+import com.vidcentral.api.dto.response.video.VideoInfoResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,9 +40,16 @@ public class VideoService {
 		return videoRepository.save(video);
 	}
 
+	public List<VideoInfoResponse> searchAllVideos() {
+		List<Video> videoList = videoReadService.findAllVideos();
+
+		return videoList.stream()
+			.map(VideoMapper::toVideoInfoResponse)
+			.toList();
+	}
+
 	@Transactional
-	public void updateVideo(AuthMember authMember, Long videoId, UpdateVideoRequest updateVideoRequest,
-		MultipartFile videoURL) {
+	public void updateVideo(AuthMember authMember, Long videoId, UpdateVideoRequest updateVideoRequest, MultipartFile videoURL) {
 		final Member loginMember = memberReadService.findMember(authMember.email());
 		final Video video = videoReadService.findVideo(videoId);
 		videoReadService.validateMemberHasAccess(video.getMember().getEmail(), loginMember.getEmail());
