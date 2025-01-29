@@ -8,17 +8,19 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Service;
 
 import com.vidcentral.api.domain.video.entity.Video;
+import com.vidcentral.api.domain.viewHistory.entity.ViewHistory;
 
 @Service
 public class SessionViewHistoryService {
 
-	private final Map<String, List<Video>> anonymousViewHistoryMap = new ConcurrentHashMap<>();
+	private final Map<String, List<ViewHistory>> anonymousViewHistoryMap = new ConcurrentHashMap<>();
 
 	public void addSessionViewHistory(String anonymousId, Video video) {
-		anonymousViewHistoryMap.computeIfAbsent(anonymousId, viewHistory -> new ArrayList<>()).add(video);
+		final ViewHistory viewHistory = ViewHistoryMapper.toViewHistory(null, video);
+		anonymousViewHistoryMap.computeIfAbsent(anonymousId, existingAnonymousId -> new ArrayList<>()).add(viewHistory);
 	}
 
-	public List<Video> getSessionViewHistory(String anonymousId) {
+	public List<ViewHistory> searchSessionViewHistory(String anonymousId) {
 		return anonymousViewHistoryMap.getOrDefault(anonymousId, new ArrayList<>());
 	}
 }
