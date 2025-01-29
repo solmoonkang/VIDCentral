@@ -75,6 +75,22 @@ public class VideoController {
 		return ResponseEntity.ok().body(videoService.searchAllVideos());
 	}
 
+	@GetMapping("/{videoId}")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(
+		summary = "비디오 조회 API",
+		description = "비디오 제목, 설명, 파일을 조회합니다."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "성공 - 비디오 조회, 비디오 정보를 조회했습니다.."),
+		@ApiResponse(responseCode = "404", description = "실패 - 해당 회원을 찾을 수 없습니다."),
+		@ApiResponse(responseCode = "409", description = "실패 - 유효하지 않은 비디오 파일입니다."),
+		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
+	})
+	public ResponseEntity<VideoInfoResponse> searchVideo(@PathVariable Long videoId) {
+		return ResponseEntity.ok().body(videoService.searchVideo(videoId));
+	}
+
 	@PutMapping("/update/{videoId}")
 	@ResponseStatus(HttpStatus.OK)
 	@Operation(
