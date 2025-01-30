@@ -46,4 +46,8 @@ public class Like extends BaseTimeEntity {
 		this.member = member;
 		this.isLike = isLike;
 	}
+
+	public void updateIsLike(boolean isLike) {
+		this.isLike = isLike;
+	}
 }
