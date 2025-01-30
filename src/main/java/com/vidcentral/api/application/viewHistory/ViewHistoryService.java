@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 public class ViewHistoryService {
 
 	private final MemberReadService memberReadService;
-	private final SessionViewHistoryService sessionViewHistoryService;
 	private final ViewHistoryRepository viewHistoryRepository;
 
 	public void saveViewHistory(Member member, Video video) {
@@ -27,17 +26,11 @@ public class ViewHistoryService {
 		viewHistoryRepository.save(viewHistory);
 	}
 
-	public List<ViewHistoryListResponse> searchAllViewHistoryForLoggedInMember(AuthMember authMember) {
+	public List<ViewHistoryListResponse> searchAllViewHistory(AuthMember authMember) {
 		final Member loginMember = memberReadService.findMember(authMember.email());
 		final List<ViewHistory> viewHistoryList = viewHistoryRepository.findViewHistoriesByMember(loginMember);
 
 		return viewHistoryList.stream()
-			.map(ViewHistoryMapper::toViewHistoryListResponse)
-			.toList();
-	}
-
-	public List<ViewHistoryListResponse> searchAllViewHistoryForAnonymousMember(String anonymousId) {
-		return sessionViewHistoryService.searchSessionViewHistory(anonymousId).stream()
 			.map(ViewHistoryMapper::toViewHistoryListResponse)
 			.toList();
 	}
