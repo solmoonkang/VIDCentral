@@ -52,15 +52,15 @@ public class VideoService {
 			.toList();
 	}
 
-	public VideoDetailResponse searchVideo(AuthMember authMember, Long videoId, String anonymousId) {
+	public VideoDetailResponse searchVideo(AuthMember authMember, Long videoId) {
 		final Video video = videoReadService.findVideo(videoId);
-		videoReadService.saveViewHistory(authMember, video, anonymousId);
+		videoReadService.saveViewHistory(authMember, video);
 		videoWriteService.incrementVideoViews(video);
 		return VideoMapper.toVideoDetailsResponse(video);
 	}
 
-	public List<ViewHistoryListResponse> searchAllViewHistory(AuthMember authMember, String anonymousId) {
-		return videoReadService.searchAllViewHistory(authMember, anonymousId);
+	public List<ViewHistoryListResponse> searchAllViewHistory(AuthMember authMember) {
+		return videoReadService.searchAllViewHistory(authMember);
 	}
 
 	@Transactional
