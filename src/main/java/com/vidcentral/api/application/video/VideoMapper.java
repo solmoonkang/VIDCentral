@@ -22,7 +22,7 @@ public class VideoMapper {
 			.build();
 	}
 
-	public static VideoListResponse toVideoInfoResponse(Video video) {
+	public static VideoListResponse toVideoListResponse(Video video) {
 		return VideoListResponse.builder()
 			.nickname(video.getMember().getNickname())
 			.title(video.getTitle())

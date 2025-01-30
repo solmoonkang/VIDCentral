@@ -48,7 +48,7 @@ public class VideoService {
 		List<Video> videoList = videoReadService.findAllVideos();
 
 		return videoList.stream()
-			.map(VideoMapper::toVideoInfoResponse)
+			.map(VideoMapper::toVideoListResponse)
 			.toList();
 	}
 
