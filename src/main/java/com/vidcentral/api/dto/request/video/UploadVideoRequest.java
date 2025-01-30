@@ -1,6 +1,6 @@
 package com.vidcentral.api.dto.request.video;
 
-import java.util.List;
+import java.util.Set;
 
 import com.vidcentral.api.domain.video.entity.VideoTag;
 
@@ -16,6 +16,6 @@ public record UploadVideoRequest(
 	String description,
 
 	@NotBlank(message = "비디오 태그는 필수 입력 항목입니다.")
-	List<VideoTag> videoTags
+	Set<VideoTag> videoTags
 ) {
 }
