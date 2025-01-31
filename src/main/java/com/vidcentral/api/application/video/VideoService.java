@@ -63,6 +63,11 @@ public class VideoService {
 		return videoReadService.searchAllViewHistory(authMember);
 	}
 
+	public List<VideoListResponse> searchAllRecommendationVideos(AuthMember authMember) {
+		final Member loginMember = memberReadService.findMember(authMember.email());
+		return videoReadService.searchAllRecommendationVideos(loginMember);
+	}
+
 	@Transactional
 	public void updateVideo(AuthMember authMember, Long videoId, UpdateVideoRequest updateVideoRequest, MultipartFile videoURL) {
 		final Member loginMember = memberReadService.findMember(authMember.email());
