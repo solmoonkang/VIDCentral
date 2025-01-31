@@ -13,4 +13,6 @@ import com.vidcentral.api.domain.video.entity.Video;
 public interface LikeRepository extends JpaRepository<Like, Long> {
 
 	Optional<Like> findLikeByVideoAndMember(Video video, Member member);
+
+	Optional<Like> findLikeByMember(Member member);
 }
