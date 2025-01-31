@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.vidcentral.api.application.auth.AnonymousMemberService;
 import com.vidcentral.api.application.video.VideoService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.video.entity.Video;
@@ -31,7 +29,6 @@ import com.vidcentral.global.auth.annotation.AuthenticationMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -41,7 +38,6 @@ import lombok.RequiredArgsConstructor;
 public class VideoController {
 
 	private final VideoService videoService;
-	private final AnonymousMemberService anonymousMemberService;
 
 	@PostMapping("/upload")
 	@ResponseStatus(HttpStatus.CREATED)
@@ -94,10 +90,9 @@ public class VideoController {
 		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
 	})
 	public ResponseEntity<List<ViewHistoryListResponse>> searchAllViewHistory(
-		@AuthenticationMember AuthMember authMember,
-		@CookieValue(value = "anonymousId", defaultValue = "") String anonymousId) {
+		@AuthenticationMember AuthMember authMember) {
 
-		return ResponseEntity.ok().body(videoService.searchAllViewHistory(authMember, anonymousId));
+		return ResponseEntity.ok().body(videoService.searchAllViewHistory(authMember));
 	}
 
 	@GetMapping("/{videoId}")
@@ -114,12 +109,27 @@ public class VideoController {
 	})
 	public ResponseEntity<VideoDetailResponse> searchVideo(
 		@AuthenticationMember AuthMember authMember,
-		@PathVariable Long videoId,
-		HttpServletResponse httpServletResponse,
-		@CookieValue(value = "anonymousId", defaultValue = "") String anonymousId) {
+		@PathVariable Long videoId) {
 
-		anonymousId = anonymousMemberService.getOrCreateAnonymousId(httpServletResponse, anonymousId);
-		return ResponseEntity.ok().body(videoService.searchVideo(authMember, videoId, anonymousId));
+		return ResponseEntity.ok().body(videoService.searchVideo(authMember, videoId));
+	}
+
+	@GetMapping("/recommendation")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(
+		summary = "모든 추천 비디오 조회 API",
+		description = "모든 추천 비디오 영상을 조회합니다."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "성공 - 모든 추천 비디오 조회, 비디오 정보를 조회했습니다.."),
+		@ApiResponse(responseCode = "404", description = "실패 - 해당 회원을 찾을 수 없습니다."),
+		@ApiResponse(responseCode = "409", description = "실패 - 유효하지 않은 비디오 파일입니다."),
+		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
+	})
+	public ResponseEntity<List<VideoListResponse>> searchAllRecommendationVideos(
+		@AuthenticationMember AuthMember authMember) {
+
+		return ResponseEntity.ok().body(videoService.searchAllRecommendationVideos(authMember));
 	}
 
 	@PutMapping("/update/{videoId}")

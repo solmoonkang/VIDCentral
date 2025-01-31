@@ -48,19 +48,24 @@ public class VideoService {
 		List<Video> videoList = videoReadService.findAllVideos();
 
 		return videoList.stream()
-			.map(VideoMapper::toVideoInfoResponse)
+			.map(VideoMapper::toVideoListResponse)
 			.toList();
 	}
 
-	public VideoDetailResponse searchVideo(AuthMember authMember, Long videoId, String anonymousId) {
+	public VideoDetailResponse searchVideo(AuthMember authMember, Long videoId) {
 		final Video video = videoReadService.findVideo(videoId);
-		videoReadService.saveViewHistory(authMember, video, anonymousId);
+		videoReadService.saveViewHistory(authMember, video);
 		videoWriteService.incrementVideoViews(video);
 		return VideoMapper.toVideoDetailsResponse(video);
 	}
 
-	public List<ViewHistoryListResponse> searchAllViewHistory(AuthMember authMember, String anonymousId) {
-		return videoReadService.searchAllViewHistory(authMember, anonymousId);
+	public List<ViewHistoryListResponse> searchAllViewHistory(AuthMember authMember) {
+		return videoReadService.searchAllViewHistory(authMember);
+	}
+
+	public List<VideoListResponse> searchAllRecommendationVideos(AuthMember authMember) {
+		final Member loginMember = memberReadService.findMember(authMember.email());
+		return videoReadService.searchAllRecommendationVideos(loginMember);
 	}
 
 	@Transactional

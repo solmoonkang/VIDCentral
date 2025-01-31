@@ -4,16 +4,19 @@ import static com.vidcentral.global.error.model.ErrorMessage.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
 import com.vidcentral.api.application.member.MemberReadService;
-import com.vidcentral.api.application.viewHistory.SessionViewHistoryService;
+import com.vidcentral.api.application.recommendation.RecommendationService;
 import com.vidcentral.api.application.viewHistory.ViewHistoryService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
+import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.domain.video.entity.VideoTag;
 import com.vidcentral.api.domain.video.repository.VideoRepository;
+import com.vidcentral.api.dto.response.video.VideoListResponse;
 import com.vidcentral.api.dto.response.viewHistory.ViewHistoryListResponse;
 import com.vidcentral.global.error.exception.BadRequestException;
 import com.vidcentral.global.error.exception.NotFoundException;
@@ -26,10 +29,10 @@ public class VideoReadService {
 
 	private static final int MAX_TAG_COUNT = 3;
 
-	private final VideoRepository videoRepository;
 	private final MemberReadService memberReadService;
 	private final ViewHistoryService viewHistoryService;
-	private final SessionViewHistoryService sessionViewHistoryService;
+	private final RecommendationService recommendationService;
+	private final VideoRepository videoRepository;
 
 	public Video findVideo(Long videoId) {
 		return videoRepository.findById(videoId)
@@ -40,19 +43,23 @@ public class VideoReadService {
 		return videoRepository.findAll();
 	}
 
-	public void saveViewHistory(AuthMember authMember, Video video, String anonymousId) {
-		Optional.ofNullable(authMember)
-			.map(loginMember -> memberReadService.findMember(loginMember.email()))
-			.ifPresentOrElse(
-				loginMember -> viewHistoryService.saveViewHistory(loginMember, video),
-				() -> sessionViewHistoryService.addSessionViewHistory(anonymousId, video)
-			);
+	public void saveViewHistory(AuthMember authMember, Video video) {
+		final Member loginMember = memberReadService.findMember(authMember.email());
+		viewHistoryService.saveViewHistory(loginMember, video);
 	}
 
-	public List<ViewHistoryListResponse> searchAllViewHistory(AuthMember authMember, String anonymousId) {
+	public List<ViewHistoryListResponse> searchAllViewHistory(AuthMember authMember) {
 		return Optional.ofNullable(authMember)
-			.map(viewHistoryService::searchAllViewHistoryForLoggedInMember)
-			.orElseGet(() -> viewHistoryService.searchAllViewHistoryForAnonymousMember(anonymousId));
+			.map(viewHistoryService::searchAllViewHistory)
+			.orElseThrow(() -> new BadRequestException(FAILED_INVALID_REQUEST_ERROR));
+	}
+
+	public List<VideoListResponse> searchAllRecommendationVideos(Member member) {
+		final Set<VideoTag> likedVideoTags = recommendationService.extractLikedVideoTags(member);
+		final Set<String> likedVideoTitles = recommendationService.extractLikedVideoTitle(member);
+		final Set<VideoTag> viewHistoryVideoTags = recommendationService.extractViewHistoryVideoTags(member);
+
+		return recommendationService.findRecommendationVideos(likedVideoTags, likedVideoTitles, viewHistoryVideoTags);
 	}
 
 	public void validateMemberHasAccess(String videoOwnerEmail, String authMemberEmail) {
@@ -61,7 +68,7 @@ public class VideoReadService {
 		}
 	}
 
-	public void validateTagCount(List<VideoTag> videoTags) {
+	public void validateTagCount(Set<VideoTag> videoTags) {
 		if (videoTags == null || videoTags.size() > MAX_TAG_COUNT) {
 			throw new BadRequestException(FAILED_MAX_TAG_COUNT_ERROR);
 		}

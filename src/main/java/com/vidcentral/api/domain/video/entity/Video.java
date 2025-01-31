@@ -2,8 +2,8 @@ package com.vidcentral.api.domain.video.entity;
 
 import static java.util.Objects.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.global.common.entity.BaseTimeEntity;
@@ -57,10 +57,10 @@ public class Video extends BaseTimeEntity {
 	@CollectionTable(name = "video_tags", joinColumns = @JoinColumn(name = "video_id"))
 	@Column(name = "video_tags")
 	@Enumerated(EnumType.STRING)
-	private List<VideoTag> videoTags = new ArrayList<>();
+	private Set<VideoTag> videoTags = new HashSet<>();
 
 	@Builder
-	private Video(Member member, String title, String description, String videoURL, List<VideoTag> videoTags) {
+	private Video(Member member, String title, String description, String videoURL, Set<VideoTag> videoTags) {
 		this.member = member;
 		this.title = title;
 		this.description = description;
@@ -80,7 +80,7 @@ public class Video extends BaseTimeEntity {
 		this.videoURL = requireNonNullElse(newVideoURL, this.videoURL);
 	}
 
-	public void updateVideoTags(List<VideoTag> videoTags) {
+	public void updateVideoTags(Set<VideoTag> videoTags) {
 		this.videoTags = requireNonNullElse(videoTags, this.videoTags);
 	}
 
