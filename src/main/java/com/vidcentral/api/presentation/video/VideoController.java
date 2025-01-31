@@ -114,6 +114,24 @@ public class VideoController {
 		return ResponseEntity.ok().body(videoService.searchVideo(authMember, videoId));
 	}
 
+	@GetMapping("/recommendation")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(
+		summary = "모든 추천 비디오 조회 API",
+		description = "모든 추천 비디오 영상을 조회합니다."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "성공 - 모든 추천 비디오 조회, 비디오 정보를 조회했습니다.."),
+		@ApiResponse(responseCode = "404", description = "실패 - 해당 회원을 찾을 수 없습니다."),
+		@ApiResponse(responseCode = "409", description = "실패 - 유효하지 않은 비디오 파일입니다."),
+		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
+	})
+	public ResponseEntity<List<VideoListResponse>> searchAllRecommendationVideos(
+		@AuthenticationMember AuthMember authMember) {
+
+		return ResponseEntity.ok().body(videoService.searchAllRecommendationVideos(authMember));
+	}
+
 	@PutMapping("/update/{videoId}")
 	@ResponseStatus(HttpStatus.OK)
 	@Operation(
