@@ -12,4 +12,6 @@ import com.vidcentral.api.domain.viewHistory.entity.ViewHistory;
 public interface ViewHistoryRepository extends JpaRepository<ViewHistory, Long> {
 
 	List<ViewHistory> findViewHistoriesByMember(Member member);
+
+	List<ViewHistory> findAllByMember(Member member);
 }
