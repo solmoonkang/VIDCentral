@@ -12,6 +12,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import com.vidcentral.api.application.auth.JwtProviderService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
+import com.vidcentral.global.auth.AuthenticationThreadLocal;
 import com.vidcentral.global.common.util.CookieUtils;
 import com.vidcentral.global.error.exception.NotFoundException;
 
@@ -30,7 +31,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 	private final HandlerExceptionResolver handlerExceptionResolver;
 
 	@Override
-	protected void doFilterInternal(@NonNull HttpServletRequest httpServletRequest,
+	protected void doFilterInternal(
+		@NonNull HttpServletRequest httpServletRequest,
 		@NonNull HttpServletResponse httpServletResponse,
 		@NonNull FilterChain filterChain) {
 
@@ -55,12 +57,15 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 		} catch (Exception exception) {
 			log.warn("[✅ LOGGER] JWT 에러 상세 설명: {}", exception.getMessage());
 			handlerExceptionResolver.resolveException(httpServletRequest, httpServletResponse, null, exception);
+		} finally {
+			AuthenticationThreadLocal.removeAuthMemberHolder();
 		}
 	}
 
 	protected void setAuthenticate(String accessToken) {
 		final AuthMember authMember = jwtProviderService.extractAuthMemberByAccessToken(accessToken);
 		final Authentication authentication = new UsernamePasswordAuthenticationToken(authMember, BLANK);
+		AuthenticationThreadLocal.saveAuthMemberHolder(authMember);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}
 }
