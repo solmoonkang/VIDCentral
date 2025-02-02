@@ -1,5 +1,7 @@
 package com.vidcentral.api.domain.comment.entity;
 
+import static java.util.Objects.*;
+
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.global.common.entity.BaseTimeEntity;
@@ -45,5 +47,9 @@ public class Comment extends BaseTimeEntity {
 		this.video = video;
 		this.member = member;
 		this.content = content;
+	}
+
+	public void updateContent(String content) {
+		this.content = requireNonNull(content, this.content);
 	}
 }
