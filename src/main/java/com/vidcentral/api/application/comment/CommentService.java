@@ -63,4 +63,14 @@ public class CommentService {
 		commentReadService.validateMemberHasAccess(comment.getMember().getEmail(), loginMember.getEmail());
 		commentWriteService.updateComment(comment, updateCommentRequest);
 	}
+
+	@Transactional
+	public void deleteComment(AuthMember authMember, Long videoId) {
+		final Member loginMember = memberReadService.findMember(authMember.email());
+		final Video video = videoReadService.findVideo(videoId);
+		final Comment comment = commentReadService.findComment(video);
+
+		commentReadService.validateMemberHasAccess(comment.getMember().getEmail(), loginMember.getEmail());
+		commentWriteService.deleteComment(comment);
+	}
 }
