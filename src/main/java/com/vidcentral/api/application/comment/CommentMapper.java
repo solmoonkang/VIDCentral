@@ -3,7 +3,7 @@ package com.vidcentral.api.application.comment;
 import com.vidcentral.api.domain.comment.entity.Comment;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
-import com.vidcentral.api.dto.response.comment.CommentListResponse;
+import com.vidcentral.api.dto.response.comment.CommentResponse;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -19,8 +19,8 @@ public class CommentMapper {
 			.build();
 	}
 
-	public static CommentListResponse toCommentListResponse(Comment comment) {
-		return CommentListResponse.builder()
+	public static CommentResponse toCommentResponse(Comment comment) {
+		return CommentResponse.builder()
 			.nickname(comment.getMember().getNickname())
 			.content(comment.getContent())
 			.build();
