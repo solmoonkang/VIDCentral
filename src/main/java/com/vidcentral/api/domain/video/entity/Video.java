@@ -18,6 +18,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -28,7 +29,11 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "VIDEO")
+@Table(name = "VIDEOS",
+	indexes = {
+		@Index(name = "IDX_VIDEO_ID", columnList = "video_id", unique = true),
+		@Index(name = "IDX_VIDEO_TITLE", columnList = "title")
+	})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Video extends BaseTimeEntity {
 
@@ -54,7 +59,11 @@ public class Video extends BaseTimeEntity {
 	private Long views = 0L;
 
 	@ElementCollection(targetClass = VideoTag.class)
-	@CollectionTable(name = "video_tags", joinColumns = @JoinColumn(name = "video_id"))
+	@CollectionTable(
+		name = "video_tags",
+		joinColumns = @JoinColumn(name = "video_id"),
+		indexes = @Index(name = "IDX_VIDEO_TAGS", columnList = "video_tags")
+	)
 	@Column(name = "video_tags")
 	@Enumerated(EnumType.STRING)
 	private Set<VideoTag> videoTags = new HashSet<>();
