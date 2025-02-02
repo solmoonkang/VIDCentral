@@ -3,7 +3,7 @@ package com.vidcentral.api.dto.response.comment;
 import lombok.Builder;
 
 @Builder
-public record CommentListResponse(
+public record CommentResponse(
 	String nickname,
 	String content
 ) {
