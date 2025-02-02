@@ -14,6 +14,7 @@ public enum ErrorMessage {
 	FAILED_INVALID_IMAGE_EXTENSION_ERROR("[❎ ERROR] 유효하지 않은 이미지 확장자입니다."),
 	FAILED_INVALID_VIDEO_ERROR("[❎ ERROR] 유효하지 않은 비디오 파일입니다."),
 	FAILED_INVALID_VIDEO_ACCESS_ERROR("[❎ ERROR] 유효하지 않은 비디오 접근입니다."),
+	FAILED_INVALID_COMMENT_ACCESS_ERROR("[❎ ERROR] 유효하지 않은 댓글 접근입니다."),
 	FAILED_MAX_TAG_COUNT_ERROR("[❎ ERROR] 태그는 최대 3개까지 설정할 수 있습니다."),
 	FAILED_S3_RESIZE_ERROR("[❎ ERROR] S3 이미지 리사이즈에 실패했습니다."),
 	FAILED_UNAUTHORIZED_MEMBER_ERROR("[❎ ERROR] 해당 사용자는 인증되지 않은 사용자입니다."),

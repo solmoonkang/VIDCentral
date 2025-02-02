@@ -22,7 +22,6 @@ public final class MemberMapper {
 		return MemberInfoResponse.builder()
 			.nickname(member.getNickname())
 			.introduce(member.getIntroduce())
-			.profileImage(member.getProfileImage())
 			.build();
 	}
 }

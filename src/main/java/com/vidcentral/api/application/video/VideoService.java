@@ -13,7 +13,6 @@ import com.vidcentral.api.application.member.MemberReadService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
-import com.vidcentral.api.domain.video.repository.VideoRepository;
 import com.vidcentral.api.dto.request.video.UpdateVideoRequest;
 import com.vidcentral.api.dto.request.video.UploadVideoRequest;
 import com.vidcentral.api.dto.response.video.VideoDetailResponse;
@@ -31,7 +30,6 @@ public class VideoService {
 	private final MemberReadService memberReadService;
 	private final VideoWriteService videoWriteService;
 	private final VideoReadService videoReadService;
-	private final VideoRepository videoRepository;
 
 	@Transactional
 	public Video uploadVideo(AuthMember authMember, UploadVideoRequest uploadVideoRequest, MultipartFile newVideoURL) {
@@ -39,9 +37,9 @@ public class VideoService {
 		final Member loginMember = memberReadService.findMember(authMember.email());
 
 		videoReadService.validateTagCount(uploadVideoRequest.videoTags());
-		final Video video = VideoMapper.toVideo(loginMember, uploadVideoRequest, videoURL);
 
-		return videoRepository.save(video);
+		final Video video = VideoMapper.toVideo(loginMember, uploadVideoRequest, videoURL);
+		return videoWriteService.saveVideo(video);
 	}
 
 	public List<VideoListResponse> searchAllVideos() {
@@ -69,7 +67,8 @@ public class VideoService {
 	}
 
 	@Transactional
-	public void updateVideo(AuthMember authMember, Long videoId, UpdateVideoRequest updateVideoRequest, MultipartFile videoURL) {
+	public void updateVideo(AuthMember authMember, Long videoId, UpdateVideoRequest updateVideoRequest,
+		MultipartFile videoURL) {
 		final Member loginMember = memberReadService.findMember(authMember.email());
 		final Video video = videoReadService.findVideo(videoId);
 
@@ -87,6 +86,6 @@ public class VideoService {
 		videoReadService.validateMemberHasAccess(video.getMember().getEmail(), loginMember.getEmail());
 
 		mediaService.deleteVideo(video.getVideoURL());
-		videoRepository.delete(video);
+		videoWriteService.deleteVideo(video);
 	}
 }
