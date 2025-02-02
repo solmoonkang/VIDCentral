@@ -11,6 +11,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -21,7 +22,10 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "VIEW_HISTORY")
+@Table(name = "VIEW_HISTORIES",
+	indexes = {
+		@Index(name = "IDX_MEMBER_VIDEO", columnList = "member_id, video_id", unique = true)
+	})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ViewHistory {
 

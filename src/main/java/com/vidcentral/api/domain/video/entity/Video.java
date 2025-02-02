@@ -18,6 +18,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -28,7 +29,10 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "VIDEO")
+@Table(name = "VIDEOS",
+	indexes = {
+		@Index(name = "IDX_VIDEO_ID", columnList = "video_id", unique = true)
+	})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Video extends BaseTimeEntity {
 
