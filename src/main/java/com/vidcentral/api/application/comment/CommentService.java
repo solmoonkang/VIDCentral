@@ -47,13 +47,6 @@ public class CommentService {
 			.toList();
 	}
 
-	public CommentResponse searchComment(Long videoId) {
-		final Video video = videoReadService.findVideo(videoId);
-		final Comment comment = commentReadService.findComment(video);
-
-		return CommentMapper.toCommentResponse(comment);
-	}
-
 	@Transactional
 	public void updateComment(AuthMember authMember, Long videoId, UpdateCommentRequest updateCommentRequest) {
 		final Member loginMember = memberReadService.findMember(authMember.email());
