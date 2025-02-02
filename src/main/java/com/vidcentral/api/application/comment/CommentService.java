@@ -13,7 +13,7 @@ import com.vidcentral.api.domain.comment.repository.CommentRepository;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.dto.request.comment.UploadCommentRequest;
-import com.vidcentral.api.dto.response.comment.CommentListResponse;
+import com.vidcentral.api.dto.response.comment.CommentResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,6 +24,7 @@ public class CommentService {
 
 	private final MemberReadService memberReadService;
 	private final VideoReadService videoReadService;
+	private final CommentReadService commentReadService;
 	private final CommentRepository commentRepository;
 
 	@Transactional
@@ -35,12 +36,19 @@ public class CommentService {
 		commentRepository.save(comment);
 	}
 
-	public List<CommentListResponse> searchAllComments(Long videoId) {
+	public List<CommentResponse> searchAllComments(Long videoId) {
 		final Video video = videoReadService.findVideo(videoId);
 		final List<Comment> comments = commentRepository.findCommentsByVideo(video);
 
 		return comments.stream()
-			.map(CommentMapper::toCommentListResponse)
+			.map(CommentMapper::toCommentResponse)
 			.toList();
+	}
+
+	public CommentResponse searchComment(Long videoId) {
+		final Video video = videoReadService.findVideo(videoId);
+		final Comment comment = commentReadService.findComment(video);
+
+		return CommentMapper.toCommentResponse(comment);
 	}
 }
