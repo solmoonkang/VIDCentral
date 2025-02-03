@@ -25,13 +25,12 @@ public class VideoMapper {
 			.build();
 	}
 
-	public static PageResponse<VideoListResponse> toPageResponse(Page<Video> page) {
-		return PageResponse.<VideoListResponse>builder()
-			.content(page.map(VideoMapper::toVideoListResponse).getContent())
-			.pageIndex(page.getNumber())
-			.totalPages(page.getTotalPages())
-			.totalElements(page.getTotalElements())
-			.isLast(page.isLast())
+	public static VideoListResponse toVideoListResponse(Video video) {
+		return VideoListResponse.builder()
+			.nickname(video.getMember().getNickname())
+			.title(video.getTitle())
+			.videoURL(video.getVideoURL())
+			.views(video.getViews())
 			.build();
 	}
 
@@ -40,15 +39,6 @@ public class VideoMapper {
 			.nickname(video.getMember().getNickname())
 			.title(video.getTitle())
 			.description(video.getDescription())
-			.videoURL(video.getVideoURL())
-			.views(video.getViews())
-			.build();
-	}
-
-	public static VideoListResponse toVideoListResponse(Video video) {
-		return VideoListResponse.builder()
-			.nickname(video.getMember().getNickname())
-			.title(video.getTitle())
 			.videoURL(video.getVideoURL())
 			.views(video.getViews())
 			.build();
