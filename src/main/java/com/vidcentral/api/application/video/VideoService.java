@@ -2,9 +2,6 @@ package com.vidcentral.api.application.video;
 
 import static com.vidcentral.api.domain.video.entity.VideoProperties.*;
 
-import java.util.List;
-import java.util.Set;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -55,7 +52,9 @@ public class VideoService {
 		return PageMapper.toPageResponse(videoPage.map(VideoMapper::toVideoListResponse));
 	}
 
-	public PageResponse<VideoListResponse> searchAllVideosByKeyword(SearchVideoRequest searchVideoRequest, int page, int size) {
+	public PageResponse<VideoListResponse> searchAllVideosByKeyword(SearchVideoRequest searchVideoRequest, int page,
+		int size) {
+
 		return videoReadService.findAllVideosByKeyword(searchVideoRequest, PageRequest.of(page, size));
 	}
 
@@ -72,13 +71,15 @@ public class VideoService {
 		return videoReadService.findAllViewHistory(authMember, PageRequest.of(page, size));
 	}
 
-	public List<VideoListResponse> searchAllRecommendationVideos(AuthMember authMember) {
+	public PageResponse<VideoListResponse> searchAllRecommendationVideos(AuthMember authMember, int page, int size) {
 		final Member loginMember = memberReadService.findMember(authMember.email());
-		return videoReadService.findAllRecommendationVideos(loginMember);
+		return videoReadService.findAllRecommendationVideos(loginMember, PageRequest.of(page, size));
 	}
 
 	@Transactional
-	public void updateVideo(AuthMember authMember, Long videoId, UpdateVideoRequest updateVideoRequest, MultipartFile videoURL) {
+	public void updateVideo(AuthMember authMember, Long videoId, UpdateVideoRequest updateVideoRequest,
+		MultipartFile videoURL) {
+
 		final Member loginMember = memberReadService.findMember(authMember.email());
 		final Video video = videoReadService.findVideo(videoId);
 
