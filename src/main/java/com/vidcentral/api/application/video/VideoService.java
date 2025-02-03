@@ -2,7 +2,6 @@ package com.vidcentral.api.application.video;
 
 import static com.vidcentral.api.domain.video.entity.VideoProperties.*;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -14,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.vidcentral.api.application.media.MediaService;
 import com.vidcentral.api.application.member.MemberReadService;
+import com.vidcentral.api.application.page.PageMapper;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
@@ -49,20 +49,21 @@ public class VideoService {
 	}
 
 	public PageResponse<VideoListResponse> searchAllVideos(int page, int size) {
-		Page<Video> videoPage = videoReadService.findAllVideos(PageRequest.of(page, size));
-		return VideoMapper.toPageResponse(videoPage);
+		final Page<Video> videoPage = videoReadService.findAllVideos(PageRequest.of(page, size));
+		return PageMapper.toPageResponse(videoPage.map(VideoMapper::toVideoListResponse));
 	}
 
-	public List<VideoListResponse> searchAllVideosByKeyword(SearchVideoRequest searchVideoRequest) {
-		List<Video> videosFoundByTitle = videoReadService.findAllVideosByTitle(searchVideoRequest.keyword());
-		List<Video> videosFoundByDescription = videoReadService.findAllVideosByDescription(searchVideoRequest.keyword());
+	public PageResponse<VideoListResponse> searchAllVideosByKeyword(SearchVideoRequest searchVideoRequest, int page, int size) {
+		final Set<Video> distinctVideos = videoReadService
+			.findAllVideosByKeyword(searchVideoRequest.keyword(), PageRequest.of(page, size));
 
-		Set<Video> distinctVideos = new HashSet<>(videosFoundByTitle);
-		distinctVideos.addAll(videosFoundByDescription);
-
-		return distinctVideos.stream()
+		final List<VideoListResponse> videoListResponses = distinctVideos.stream()
 			.map(VideoMapper::toVideoListResponse)
 			.toList();
+
+		final Page<VideoListResponse> videoListResponsePage = PageMapper
+			.toPageImpl(videoListResponses, PageRequest.of(page, size), distinctVideos.size());
+		return PageMapper.toPageResponse(videoListResponsePage);
 	}
 
 	public VideoDetailResponse searchVideo(AuthMember authMember, Long videoId) {
