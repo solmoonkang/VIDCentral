@@ -52,18 +52,16 @@ public class VideoService {
 		return PageMapper.toPageResponse(videoPage.map(VideoMapper::toVideoListResponse));
 	}
 
-	public PageResponse<VideoListResponse> searchAllVideosByKeyword(SearchVideoRequest searchVideoRequest, int page,
-		int size) {
+	public PageResponse<VideoListResponse> searchAllVideosByKeyword(
+		SearchVideoRequest searchVideoRequest, int page, int size) {
 
 		return videoReadService.findAllVideosByKeyword(searchVideoRequest, PageRequest.of(page, size));
 	}
 
 	public VideoDetailResponse searchVideo(AuthMember authMember, Long videoId) {
 		final Video video = videoReadService.findVideo(videoId);
-
 		handleViewHistoryIfLoggedIn(authMember, video);
-		videoWriteService.incrementVideoViews(video);
-
+		videoWriteService.incrementVideoViewsAsync(videoId);
 		return VideoMapper.toVideoDetailsResponse(video);
 	}
 
