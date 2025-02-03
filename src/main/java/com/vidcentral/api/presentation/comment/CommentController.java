@@ -17,7 +17,7 @@ import com.vidcentral.api.application.comment.CommentService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.dto.request.comment.UpdateCommentRequest;
 import com.vidcentral.api.dto.request.comment.UploadCommentRequest;
-import com.vidcentral.api.dto.response.comment.CommentResponse;
+import com.vidcentral.api.dto.response.comment.CommentListResponse;
 import com.vidcentral.api.dto.response.page.PageResponse;
 import com.vidcentral.global.auth.annotation.AuthenticationMember;
 
@@ -66,7 +66,7 @@ public class CommentController {
 		@ApiResponse(responseCode = "404", description = "실패 - 해당 회원을 찾을 수 없습니다."),
 		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
 	})
-	public ResponseEntity<PageResponse<CommentResponse>> searchAllComments(
+	public ResponseEntity<PageResponse<CommentListResponse>> searchAllComments(
 		@PathVariable Long videoId,
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "10") int size) {

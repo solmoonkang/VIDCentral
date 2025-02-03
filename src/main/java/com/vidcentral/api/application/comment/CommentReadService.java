@@ -12,7 +12,7 @@ import com.vidcentral.api.application.page.PageMapper;
 import com.vidcentral.api.domain.comment.entity.Comment;
 import com.vidcentral.api.domain.comment.repository.CommentRepository;
 import com.vidcentral.api.domain.video.entity.Video;
-import com.vidcentral.api.dto.response.comment.CommentResponse;
+import com.vidcentral.api.dto.response.comment.CommentListResponse;
 import com.vidcentral.api.dto.response.page.PageResponse;
 import com.vidcentral.global.error.exception.BadRequestException;
 import com.vidcentral.global.error.exception.NotFoundException;
@@ -30,15 +30,15 @@ public class CommentReadService {
 			.orElseThrow(() -> new NotFoundException(FAILED_VIDEO_NOT_FOUND_ERROR));
 	}
 
-	public PageResponse<CommentResponse> findAllCommentsByVideo(Video video, Pageable pageable) {
+	public PageResponse<CommentListResponse> findAllCommentsByVideo(Video video, Pageable pageable) {
 		final Page<Comment> comments = commentRepository.findCommentsByVideo(video, pageable);
 
-		final List<CommentResponse> commentResponses = comments.getContent().stream()
-			.map(CommentMapper::toCommentResponse)
+		final List<CommentListResponse> commentListResponses = comments.getContent().stream()
+			.map(CommentMapper::toCommentListResponse)
 			.toList();
 
 		return PageMapper.toPageResponse(
-			PageMapper.toPageImpl(commentResponses, pageable, comments.getTotalElements()));
+			PageMapper.toPageImpl(commentListResponses, pageable, comments.getTotalElements()));
 	}
 
 	public void validateMemberHasAccess(String commentOwnerEmail, String authMemberEmail) {

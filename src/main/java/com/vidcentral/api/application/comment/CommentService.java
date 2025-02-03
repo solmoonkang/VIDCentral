@@ -12,7 +12,7 @@ import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.dto.request.comment.UpdateCommentRequest;
 import com.vidcentral.api.dto.request.comment.UploadCommentRequest;
-import com.vidcentral.api.dto.response.comment.CommentResponse;
+import com.vidcentral.api.dto.response.comment.CommentListResponse;
 import com.vidcentral.api.dto.response.page.PageResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ public class CommentService {
 		commentWriteService.saveComment(comment);
 	}
 
-	public PageResponse<CommentResponse> searchAllComments(Long videoId, int page, int size) {
+	public PageResponse<CommentListResponse> searchAllComments(Long videoId, int page, int size) {
 		final Video video = videoReadService.findVideo(videoId);
 		return commentReadService.findAllCommentsByVideo(video, PageRequest.of(page, size));
 	}
