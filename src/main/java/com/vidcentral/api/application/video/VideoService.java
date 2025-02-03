@@ -2,7 +2,9 @@ package com.vidcentral.api.application.video;
 
 import static com.vidcentral.api.domain.video.entity.VideoProperties.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +15,7 @@ import com.vidcentral.api.application.member.MemberReadService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
+import com.vidcentral.api.dto.request.video.SearchVideoRequest;
 import com.vidcentral.api.dto.request.video.UpdateVideoRequest;
 import com.vidcentral.api.dto.request.video.UploadVideoRequest;
 import com.vidcentral.api.dto.response.video.VideoDetailResponse;
@@ -50,6 +53,18 @@ public class VideoService {
 			.toList();
 	}
 
+	public List<VideoListResponse> searchAllVideosByKeyword(SearchVideoRequest searchVideoRequest) {
+		List<Video> videosFoundByTitle = videoReadService.findAllVideosByTitle(searchVideoRequest.keyword());
+		List<Video> videosFoundByDescription = videoReadService.findAllVideosByDescription(searchVideoRequest.keyword());
+
+		Set<Video> distinctVideos = new HashSet<>(videosFoundByTitle);
+		distinctVideos.addAll(videosFoundByDescription);
+
+		return distinctVideos.stream()
+			.map(VideoMapper::toVideoListResponse)
+			.toList();
+	}
+
 	public VideoDetailResponse searchVideo(AuthMember authMember, Long videoId) {
 		final Video video = videoReadService.findVideo(videoId);
 		videoReadService.saveViewHistory(authMember, video);
@@ -58,17 +73,16 @@ public class VideoService {
 	}
 
 	public List<ViewHistoryListResponse> searchAllViewHistory(AuthMember authMember) {
-		return videoReadService.searchAllViewHistory(authMember);
+		return videoReadService.findAllViewHistory(authMember);
 	}
 
 	public List<VideoListResponse> searchAllRecommendationVideos(AuthMember authMember) {
 		final Member loginMember = memberReadService.findMember(authMember.email());
-		return videoReadService.searchAllRecommendationVideos(loginMember);
+		return videoReadService.findAllRecommendationVideos(loginMember);
 	}
 
 	@Transactional
-	public void updateVideo(AuthMember authMember, Long videoId, UpdateVideoRequest updateVideoRequest,
-		MultipartFile videoURL) {
+	public void updateVideo(AuthMember authMember, Long videoId, UpdateVideoRequest updateVideoRequest, MultipartFile videoURL) {
 		final Member loginMember = memberReadService.findMember(authMember.email());
 		final Video video = videoReadService.findVideo(videoId);
 
