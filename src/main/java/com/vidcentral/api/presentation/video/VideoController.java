@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.vidcentral.api.application.video.VideoService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.video.entity.Video;
+import com.vidcentral.api.dto.request.video.SearchVideoRequest;
 import com.vidcentral.api.dto.request.video.UpdateVideoRequest;
 import com.vidcentral.api.dto.request.video.UploadVideoRequest;
 import com.vidcentral.api.dto.response.video.VideoDetailResponse;
@@ -64,35 +65,34 @@ public class VideoController {
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
 	@Operation(
-		summary = "모든 비디오 조회 API",
-		description = "모든 비디오 제목, 설명, 파일을 조회합니다."
+		summary = "비디오 목록 조회 API",
+		description = "비디오 제목, 설명, 파일 목록을 조회합니다."
 	)
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "성공 - 모든 비디오 조회, 모든 비디오 정보를 조회했습니다."),
-		@ApiResponse(responseCode = "404", description = "실패 - 해당 회원을 찾을 수 없습니다."),
-		@ApiResponse(responseCode = "409", description = "실패 - 유효하지 않은 비디오 파일입니다."),
+		@ApiResponse(responseCode = "200", description = "성공 - 비디오 목록 조회, 모든 비디오 정보를 조회했습니다."),
+		@ApiResponse(responseCode = "404", description = "실패 - 해당 비디오를 찾을 수 없습니다."),
 		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
 	})
 	public ResponseEntity<List<VideoListResponse>> searchAllVideos() {
 		return ResponseEntity.ok().body(videoService.searchAllVideos());
 	}
 
-	@GetMapping("/view-history")
+	@GetMapping("/keyword")
 	@ResponseStatus(HttpStatus.OK)
 	@Operation(
-		summary = "모든 비디오 시청 기록 조회 API",
-		description = "모든 비디오 제목, 설명, 파일, 조회수, 시청 시간을 조회합니다."
+		summary = "키워드로 비디오 목록 조회 API",
+		description = "사용자가 입력한 키워드를 기반으로 제목과 설명에 일치하는 비디오 목록을 조회합니다."
 	)
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "성공 - 모든 비디오 시청 기록 조회, 모든 비디오 시청 기록을 조회했습니다."),
-		@ApiResponse(responseCode = "404", description = "실패 - 해당 회원을 찾을 수 없습니다."),
-		@ApiResponse(responseCode = "409", description = "실패 - 유효하지 않은 비디오 파일입니다."),
+		@ApiResponse(responseCode = "200", description = "성공 - 키워드로 비디오 목록 조회, 모든 비디오 정보를 조회했습니다."),
+		@ApiResponse(responseCode = "400", description = "실패 - 잘못된 요청, 검색어가 유효하지 않습니다."),
+		@ApiResponse(responseCode = "404", description = "실패 - 해당 비디오를 찾을 수 없습니다."),
 		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
 	})
-	public ResponseEntity<List<ViewHistoryListResponse>> searchAllViewHistory(
-		@AuthenticationMember AuthMember authMember) {
+	public ResponseEntity<List<VideoListResponse>> searchAllVideosByKeyword(
+		@Valid @RequestPart(required = false) SearchVideoRequest searchVideoRequest) {
 
-		return ResponseEntity.ok().body(videoService.searchAllViewHistory(authMember));
+		return ResponseEntity.ok().body(videoService.searchAllVideosByKeyword(searchVideoRequest));
 	}
 
 	@GetMapping("/{videoId}")
@@ -102,7 +102,7 @@ public class VideoController {
 		description = "비디오 제목, 설명, 파일을 조회합니다."
 	)
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "성공 - 비디오 조회, 비디오 정보를 조회했습니다.."),
+		@ApiResponse(responseCode = "200", description = "성공 - 비디오 조회, 비디오 정보를 조회했습니다."),
 		@ApiResponse(responseCode = "404", description = "실패 - 해당 회원을 찾을 수 없습니다."),
 		@ApiResponse(responseCode = "409", description = "실패 - 유효하지 않은 비디오 파일입니다."),
 		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
@@ -114,16 +114,32 @@ public class VideoController {
 		return ResponseEntity.ok().body(videoService.searchVideo(authMember, videoId));
 	}
 
+	@GetMapping("/view-history")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(
+		summary = "비디오 시청 기록 목록 조회 API",
+		description = "비디오 제목, 설명, 파일, 조회수, 시청 시간 목록을 조회합니다."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "성공 - 비디오 시청 기록 목록 조회, 모든 비디오 시청 기록을 조회했습니다."),
+		@ApiResponse(responseCode = "404", description = "실패 - 해당 회원을 찾을 수 없습니다."),
+		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
+	})
+	public ResponseEntity<List<ViewHistoryListResponse>> searchAllViewHistory(
+		@AuthenticationMember AuthMember authMember) {
+
+		return ResponseEntity.ok().body(videoService.searchAllViewHistory(authMember));
+	}
+
 	@GetMapping("/recommendation")
 	@ResponseStatus(HttpStatus.OK)
 	@Operation(
-		summary = "모든 추천 비디오 조회 API",
-		description = "모든 추천 비디오 영상을 조회합니다."
+		summary = "추천 비디오 목록 조회 API",
+		description = "추천 비디오 영상 목록을 조회합니다."
 	)
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "성공 - 모든 추천 비디오 조회, 비디오 정보를 조회했습니다.."),
+		@ApiResponse(responseCode = "200", description = "성공 - 추천 비디오 목록 조회, 모든 추천 비디오 정보를 조회했습니다."),
 		@ApiResponse(responseCode = "404", description = "실패 - 해당 회원을 찾을 수 없습니다."),
-		@ApiResponse(responseCode = "409", description = "실패 - 유효하지 않은 비디오 파일입니다."),
 		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
 	})
 	public ResponseEntity<List<VideoListResponse>> searchAllRecommendationVideos(
@@ -141,8 +157,7 @@ public class VideoController {
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "성공 - 비디오 수정, 비디오 정보가 업데이트되었습니다."),
 		@ApiResponse(responseCode = "400", description = "실패 - 잘못된 요청, 필수 입력값이 누락되었거나 형식이 올바르지 않습니다."),
-		@ApiResponse(responseCode = "404", description = "실패 - 해당 회원을 찾을 수 없습니다."),
-		@ApiResponse(responseCode = "409", description = "실패 - 유효하지 않은 비디오 파일입니다."),
+		@ApiResponse(responseCode = "404", description = "실패 - 해당 회원 또는 비디오를 찾을 수 없습니다."),
 		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
 	})
 	public ResponseEntity<String> updateVideo(
@@ -164,8 +179,7 @@ public class VideoController {
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "성공 - 비디오 삭제, 비디오 정보가 삭제되었습니다."),
 		@ApiResponse(responseCode = "400", description = "실패 - 잘못된 요청, 필수 입력값이 누락되었거나 형식이 올바르지 않습니다."),
-		@ApiResponse(responseCode = "404", description = "실패 - 해당 회원을 찾을 수 없습니다."),
-		@ApiResponse(responseCode = "409", description = "실패 - 유효하지 않은 비디오 파일입니다."),
+		@ApiResponse(responseCode = "404", description = "실패 - 해당 회원 또는 비디오를 찾을 수 없습니다."),
 		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
 	})
 	public ResponseEntity<String> deleteVideo(
