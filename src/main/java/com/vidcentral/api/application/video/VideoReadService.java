@@ -47,7 +47,8 @@ public class VideoReadService {
 		return videoRepository.findAll(pageable);
 	}
 
-	public PageResponse<VideoListResponse> findAllVideosByKeyword(SearchVideoRequest searchVideoRequest, Pageable pageable) {
+	public PageResponse<VideoListResponse> findAllVideosByKeyword(SearchVideoRequest searchVideoRequest,
+		Pageable pageable) {
 		final Set<Video> distinctVideos = findDistinctVideosByKeyword(searchVideoRequest.keyword(), pageable);
 
 		final List<VideoListResponse> videoListResponses = distinctVideos.stream()
@@ -82,12 +83,13 @@ public class VideoReadService {
 			.orElseThrow(() -> new BadRequestException(FAILED_INVALID_REQUEST_ERROR));
 	}
 
-	public List<VideoListResponse> findAllRecommendationVideos(Member member) {
+	public PageResponse<VideoListResponse> findAllRecommendationVideos(Member member, Pageable pageable) {
 		final Set<VideoTag> likedVideoTags = recommendationService.extractLikedVideoTags(member);
 		final Set<String> likedVideoTitles = recommendationService.extractLikedVideoTitle(member);
 		final Set<VideoTag> viewHistoryVideoTags = recommendationService.extractViewHistoryVideoTags(member);
 
-		return recommendationService.findRecommendationVideos(likedVideoTags, likedVideoTitles, viewHistoryVideoTags);
+		return recommendationService
+			.findRecommendationVideos(likedVideoTags, likedVideoTitles, viewHistoryVideoTags, pageable);
 	}
 
 	public void validateMemberHasAccess(String videoOwnerEmail, String authMemberEmail) {
