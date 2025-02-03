@@ -2,19 +2,23 @@ package com.vidcentral.api.application.video;
 
 import static com.vidcentral.api.domain.video.entity.VideoProperties.*;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.vidcentral.api.application.media.MediaService;
 import com.vidcentral.api.application.member.MemberReadService;
+import com.vidcentral.api.application.page.PageMapper;
+import com.vidcentral.api.application.viewHistory.ViewHistoryService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
+import com.vidcentral.api.dto.request.video.SearchVideoRequest;
 import com.vidcentral.api.dto.request.video.UpdateVideoRequest;
 import com.vidcentral.api.dto.request.video.UploadVideoRequest;
+import com.vidcentral.api.dto.response.page.PageResponse;
 import com.vidcentral.api.dto.response.video.VideoDetailResponse;
 import com.vidcentral.api.dto.response.video.VideoListResponse;
 import com.vidcentral.api.dto.response.viewHistory.ViewHistoryListResponse;
@@ -30,6 +34,7 @@ public class VideoService {
 	private final MemberReadService memberReadService;
 	private final VideoWriteService videoWriteService;
 	private final VideoReadService videoReadService;
+	private final ViewHistoryService viewHistoryService;
 
 	@Transactional
 	public Video uploadVideo(AuthMember authMember, UploadVideoRequest uploadVideoRequest, MultipartFile newVideoURL) {
@@ -42,33 +47,39 @@ public class VideoService {
 		return videoWriteService.saveVideo(video);
 	}
 
-	public List<VideoListResponse> searchAllVideos() {
-		List<Video> videoList = videoReadService.findAllVideos();
+	public PageResponse<VideoListResponse> searchAllVideos(int page, int size) {
+		final Page<Video> videoPage = videoReadService.findAllVideos(PageRequest.of(page, size));
+		return PageMapper.toPageResponse(videoPage.map(VideoMapper::toVideoListResponse));
+	}
 
-		return videoList.stream()
-			.map(VideoMapper::toVideoListResponse)
-			.toList();
+	public PageResponse<VideoListResponse> searchAllVideosByKeyword(SearchVideoRequest searchVideoRequest, int page,
+		int size) {
+
+		return videoReadService.findAllVideosByKeyword(searchVideoRequest, PageRequest.of(page, size));
 	}
 
 	public VideoDetailResponse searchVideo(AuthMember authMember, Long videoId) {
 		final Video video = videoReadService.findVideo(videoId);
-		videoReadService.saveViewHistory(authMember, video);
+
+		handleViewHistoryIfLoggedIn(authMember, video);
 		videoWriteService.incrementVideoViews(video);
+
 		return VideoMapper.toVideoDetailsResponse(video);
 	}
 
-	public List<ViewHistoryListResponse> searchAllViewHistory(AuthMember authMember) {
-		return videoReadService.searchAllViewHistory(authMember);
+	public PageResponse<ViewHistoryListResponse> searchAllViewHistory(AuthMember authMember, int page, int size) {
+		return videoReadService.findAllViewHistory(authMember, PageRequest.of(page, size));
 	}
 
-	public List<VideoListResponse> searchAllRecommendationVideos(AuthMember authMember) {
+	public PageResponse<VideoListResponse> searchAllRecommendationVideos(AuthMember authMember, int page, int size) {
 		final Member loginMember = memberReadService.findMember(authMember.email());
-		return videoReadService.searchAllRecommendationVideos(loginMember);
+		return videoReadService.findAllRecommendationVideos(loginMember, PageRequest.of(page, size));
 	}
 
 	@Transactional
 	public void updateVideo(AuthMember authMember, Long videoId, UpdateVideoRequest updateVideoRequest,
 		MultipartFile videoURL) {
+
 		final Member loginMember = memberReadService.findMember(authMember.email());
 		final Video video = videoReadService.findVideo(videoId);
 
@@ -87,5 +98,12 @@ public class VideoService {
 
 		mediaService.deleteVideo(video.getVideoURL());
 		videoWriteService.deleteVideo(video);
+	}
+
+	private void handleViewHistoryIfLoggedIn(AuthMember authMember, Video video) {
+		if (authMember != null) {
+			final Member loginMember = memberReadService.findMember(authMember.email());
+			viewHistoryService.saveViewHistory(loginMember, video);
+		}
 	}
 }

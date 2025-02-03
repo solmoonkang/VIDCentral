@@ -1,8 +1,11 @@
 package com.vidcentral.api.application.video;
 
+import org.springframework.data.domain.Page;
+
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.dto.request.video.UploadVideoRequest;
+import com.vidcentral.api.dto.response.page.PageResponse;
 import com.vidcentral.api.dto.response.video.VideoDetailResponse;
 import com.vidcentral.api.dto.response.video.VideoListResponse;
 

@@ -1,7 +1,5 @@
 package com.vidcentral.api.presentation.comment;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +17,8 @@ import com.vidcentral.api.application.comment.CommentService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.dto.request.comment.UpdateCommentRequest;
 import com.vidcentral.api.dto.request.comment.UploadCommentRequest;
-import com.vidcentral.api.dto.response.comment.CommentResponse;
+import com.vidcentral.api.dto.response.comment.CommentListResponse;
+import com.vidcentral.api.dto.response.page.PageResponse;
 import com.vidcentral.global.auth.annotation.AuthenticationMember;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -66,8 +66,12 @@ public class CommentController {
 		@ApiResponse(responseCode = "404", description = "실패 - 해당 회원을 찾을 수 없습니다."),
 		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
 	})
-	public ResponseEntity<List<CommentResponse>> searchAllComments(@PathVariable Long videoId) {
-		return ResponseEntity.ok().body(commentService.searchAllComments(videoId));
+	public ResponseEntity<PageResponse<CommentListResponse>> searchAllComments(
+		@PathVariable Long videoId,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
+
+		return ResponseEntity.ok().body(commentService.searchAllComments(videoId, page, size));
 	}
 
 	@PutMapping("/update/{videoId}")
