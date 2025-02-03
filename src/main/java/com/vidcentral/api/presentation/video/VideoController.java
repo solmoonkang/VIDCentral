@@ -132,10 +132,12 @@ public class VideoController {
 		@ApiResponse(responseCode = "404", description = "실패 - 해당 회원을 찾을 수 없습니다."),
 		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
 	})
-	public ResponseEntity<List<ViewHistoryListResponse>> searchAllViewHistory(
-		@AuthenticationMember AuthMember authMember) {
+	public ResponseEntity<PageResponse<ViewHistoryListResponse>> searchAllViewHistory(
+		@AuthenticationMember AuthMember authMember,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
 
-		return ResponseEntity.ok().body(videoService.searchAllViewHistory(authMember));
+		return ResponseEntity.ok().body(videoService.searchAllViewHistory(authMember, page, size));
 	}
 
 	@GetMapping("/recommendation")
