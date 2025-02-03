@@ -1,5 +1,7 @@
 package com.vidcentral.api.infrastructure.redis;
 
+import static com.vidcentral.global.error.model.ErrorMessage.*;
+
 import java.time.Duration;
 import java.util.Map;
 
@@ -9,7 +11,6 @@ import org.springframework.data.redis.hash.Jackson2HashMapper;
 import org.springframework.stereotype.Repository;
 
 import com.vidcentral.global.error.exception.NotFoundException;
-import com.vidcentral.global.error.model.ErrorMessage;
 
 @Repository
 public class HashRedisRepository {
@@ -41,7 +42,7 @@ public class HashRedisRepository {
 
 	private void validateTokenEmpty(Map<String, Object> dataMap) {
 		if (dataMap.isEmpty()) {
-			throw new NotFoundException(ErrorMessage.FAILED_TOKEN_NOT_FOUND);
+			throw new NotFoundException(FAILED_TOKEN_NOT_FOUND_ERROR);
 		}
 	}
 }

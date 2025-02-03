@@ -72,6 +72,6 @@ public class GlobalExceptionHandler {
 			.getFieldErrors()
 			.forEach(fieldError -> validationMap.put(fieldError.getField(), fieldError.getDefaultMessage()));
 
-		return new ErrorResponse(FAILED_INVALID_REQUEST.getMessage(), validationMap);
+		return new ErrorResponse(FAILED_INVALID_REQUEST_ERROR.getMessage(), validationMap);
 	}
 }
