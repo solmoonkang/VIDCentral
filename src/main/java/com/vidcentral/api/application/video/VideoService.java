@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +20,7 @@ import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.dto.request.video.SearchVideoRequest;
 import com.vidcentral.api.dto.request.video.UpdateVideoRequest;
 import com.vidcentral.api.dto.request.video.UploadVideoRequest;
+import com.vidcentral.api.dto.response.page.PageResponse;
 import com.vidcentral.api.dto.response.video.VideoDetailResponse;
 import com.vidcentral.api.dto.response.video.VideoListResponse;
 import com.vidcentral.api.dto.response.viewHistory.ViewHistoryListResponse;
@@ -45,12 +48,9 @@ public class VideoService {
 		return videoWriteService.saveVideo(video);
 	}
 
-	public List<VideoListResponse> searchAllVideos() {
-		List<Video> videoList = videoReadService.findAllVideos();
-
-		return videoList.stream()
-			.map(VideoMapper::toVideoListResponse)
-			.toList();
+	public PageResponse<VideoListResponse> searchAllVideos(int page, int size) {
+		Page<Video> videoPage = videoReadService.findAllVideos(PageRequest.of(page, size));
+		return VideoMapper.toPageResponse(videoPage);
 	}
 
 	public List<VideoListResponse> searchAllVideosByKeyword(SearchVideoRequest searchVideoRequest) {
