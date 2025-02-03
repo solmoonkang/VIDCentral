@@ -43,18 +43,26 @@ public class VideoReadService {
 		return videoRepository.findAll();
 	}
 
+	public List<Video> findAllVideosByTitle(String title) {
+		return videoRepository.findVideosByTitle(title);
+	}
+
+	public List<Video> findAllVideosByDescription(String description) {
+		return videoRepository.findVideosByDescription(description);
+	}
+
 	public void saveViewHistory(AuthMember authMember, Video video) {
 		final Member loginMember = memberReadService.findMember(authMember.email());
 		viewHistoryService.saveViewHistory(loginMember, video);
 	}
 
-	public List<ViewHistoryListResponse> searchAllViewHistory(AuthMember authMember) {
+	public List<ViewHistoryListResponse> findAllViewHistory(AuthMember authMember) {
 		return Optional.ofNullable(authMember)
 			.map(viewHistoryService::searchAllViewHistory)
 			.orElseThrow(() -> new BadRequestException(FAILED_INVALID_REQUEST_ERROR));
 	}
 
-	public List<VideoListResponse> searchAllRecommendationVideos(Member member) {
+	public List<VideoListResponse> findAllRecommendationVideos(Member member) {
 		final Set<VideoTag> likedVideoTags = recommendationService.extractLikedVideoTags(member);
 		final Set<String> likedVideoTitles = recommendationService.extractLikedVideoTitle(member);
 		final Set<VideoTag> viewHistoryVideoTags = recommendationService.extractViewHistoryVideoTags(member);
