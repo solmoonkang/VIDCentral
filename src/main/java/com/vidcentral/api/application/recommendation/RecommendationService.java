@@ -5,9 +5,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.vidcentral.api.application.page.PageMapper;
 import com.vidcentral.api.application.video.VideoMapper;
 import com.vidcentral.api.domain.like.entity.Like;
 import com.vidcentral.api.domain.like.repository.LikeRepository;
@@ -16,6 +19,7 @@ import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.domain.video.entity.VideoTag;
 import com.vidcentral.api.domain.video.repository.VideoRepository;
 import com.vidcentral.api.domain.viewHistory.repository.ViewHistoryRepository;
+import com.vidcentral.api.dto.response.page.PageResponse;
 import com.vidcentral.api.dto.response.video.VideoListResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -49,31 +53,34 @@ public class RecommendationService {
 			.collect(Collectors.toSet());
 	}
 
-	public List<VideoListResponse> findRecommendationVideos(
-		Set<VideoTag> likedVideoTags,
-		Set<String> likedVideoTitles,
-		Set<VideoTag> viewHistoryVideoTags) {
+	public PageResponse<VideoListResponse> findRecommendationVideos(Set<VideoTag> likedVideoTags,
+		Set<String> likedVideoTitles, Set<VideoTag> viewHistoryVideoTags, Pageable pageable) {
 
-		final List<Video> allVideos = videoRepository.findAll();
+		final Page<Video> allVideos = videoRepository.findAll(pageable);
 
-		return allVideos.stream()
+		final List<VideoListResponse> videoListResponses = allVideos.getContent().stream()
 			.filter(video -> isRecommendedVideo(video, likedVideoTags, likedVideoTitles, viewHistoryVideoTags))
 			.map(VideoMapper::toVideoListResponse)
 			.toList();
+
+		return PageMapper.toPageResponse(
+			PageMapper.toPageImpl(videoListResponses, pageable, allVideos.getTotalElements()));
 	}
 
-	public boolean isRecommendedVideo(
-		Video video,
-		Set<VideoTag> likedVideoTags,
-		Set<String> likedVideoTitles,
+	public boolean isRecommendedVideo(Video video, Set<VideoTag> likedVideoTags, Set<String> likedVideoTitles,
 		Set<VideoTag> viewHistoryVideoTags) {
 
-		boolean hasRelevantTags = !Collections.disjoint(video.getVideoTags(), likedVideoTags) ||
+		return hasRelevantTags(video, likedVideoTags, viewHistoryVideoTags) || hasRelevantTitle(video,
+			likedVideoTitles);
+	}
+
+	private boolean hasRelevantTags(Video video, Set<VideoTag> likedVideoTags, Set<VideoTag> viewHistoryVideoTags) {
+		return !Collections.disjoint(video.getVideoTags(), likedVideoTags) ||
 			!Collections.disjoint(video.getVideoTags(), viewHistoryVideoTags);
+	}
 
-		boolean hasRelevantTitle = likedVideoTitles.stream()
+	private boolean hasRelevantTitle(Video video, Set<String> likedVideoTitles) {
+		return likedVideoTitles.stream()
 			.anyMatch(video.getTitle()::contains);
-
-		return hasRelevantTags || hasRelevantTitle;
 	}
 }
