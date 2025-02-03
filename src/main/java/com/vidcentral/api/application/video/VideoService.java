@@ -56,16 +56,7 @@ public class VideoService {
 	}
 
 	public PageResponse<VideoListResponse> searchAllVideosByKeyword(SearchVideoRequest searchVideoRequest, int page, int size) {
-		final Set<Video> distinctVideos = videoReadService
-			.findAllVideosByKeyword(searchVideoRequest.keyword(), PageRequest.of(page, size));
-
-		final List<VideoListResponse> videoListResponses = distinctVideos.stream()
-			.map(VideoMapper::toVideoListResponse)
-			.toList();
-
-		final Page<VideoListResponse> videoListResponsePage = PageMapper
-			.toPageImpl(videoListResponses, PageRequest.of(page, size), distinctVideos.size());
-		return PageMapper.toPageResponse(videoListResponsePage);
+		return videoReadService.findAllVideosByKeyword(searchVideoRequest, PageRequest.of(page, size));
 	}
 
 	public VideoDetailResponse searchVideo(AuthMember authMember, Long videoId) {
@@ -77,8 +68,8 @@ public class VideoService {
 		return VideoMapper.toVideoDetailsResponse(video);
 	}
 
-	public List<ViewHistoryListResponse> searchAllViewHistory(AuthMember authMember) {
-		return videoReadService.findAllViewHistory(authMember);
+	public PageResponse<ViewHistoryListResponse> searchAllViewHistory(AuthMember authMember, int page, int size) {
+		return videoReadService.findAllViewHistory(authMember, PageRequest.of(page, size));
 	}
 
 	public List<VideoListResponse> searchAllRecommendationVideos(AuthMember authMember) {
