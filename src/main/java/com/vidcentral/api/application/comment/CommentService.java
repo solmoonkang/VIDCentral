@@ -1,7 +1,6 @@
 package com.vidcentral.api.application.comment;
 
-import java.util.List;
-
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,12 +8,12 @@ import com.vidcentral.api.application.member.MemberReadService;
 import com.vidcentral.api.application.video.VideoReadService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.comment.entity.Comment;
-import com.vidcentral.api.domain.comment.repository.CommentRepository;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.dto.request.comment.UpdateCommentRequest;
 import com.vidcentral.api.dto.request.comment.UploadCommentRequest;
 import com.vidcentral.api.dto.response.comment.CommentResponse;
+import com.vidcentral.api.dto.response.page.PageResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,7 +26,6 @@ public class CommentService {
 	private final VideoReadService videoReadService;
 	private final CommentReadService commentReadService;
 	private final CommentWriteService commentWriteService;
-	private final CommentRepository commentRepository;
 
 	@Transactional
 	public void uploadComment(AuthMember authMember, Long videoId, UploadCommentRequest uploadCommentRequest) {
@@ -38,13 +36,9 @@ public class CommentService {
 		commentWriteService.saveComment(comment);
 	}
 
-	public List<CommentResponse> searchAllComments(Long videoId) {
+	public PageResponse<CommentResponse> searchAllComments(Long videoId, int page, int size) {
 		final Video video = videoReadService.findVideo(videoId);
-		final List<Comment> comments = commentRepository.findCommentsByVideo(video);
-
-		return comments.stream()
-			.map(CommentMapper::toCommentResponse)
-			.toList();
+		return commentReadService.findAllCommentsByVideo(video, PageRequest.of(page, size));
 	}
 
 	@Transactional
