@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.member.repository.MemberRepository;
 import com.vidcentral.api.dto.request.member.SignUpRequest;
-import com.vidcentral.api.dto.request.member.UpdateRequest;
+import com.vidcentral.api.dto.request.member.UpdateMemberRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,9 +21,9 @@ public class MemberWriteService {
 		memberRepository.save(MemberMapper.toMember(signUpRequest, passwordEncoder.encode(signUpRequest.password())));
 	}
 
-	public void changeMemberInfo(Member member, UpdateRequest updateRequest, String newProfileImageURL) {
-		member.updateIntroduce(updateRequest.introduce());
-		member.updateNickname(updateRequest.nickname());
+	public void changeMemberInfo(Member member, UpdateMemberRequest updateMemberRequest, String newProfileImageURL) {
+		member.updateIntroduce(updateMemberRequest.introduce());
+		member.updateNickname(updateMemberRequest.nickname());
 		member.updateProfileImageURL(newProfileImageURL);
 	}
 }

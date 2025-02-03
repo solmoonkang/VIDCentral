@@ -17,7 +17,7 @@ import com.vidcentral.api.application.member.MemberService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.dto.request.auth.LoginRequest;
 import com.vidcentral.api.dto.request.member.SignUpRequest;
-import com.vidcentral.api.dto.request.member.UpdateRequest;
+import com.vidcentral.api.dto.request.member.UpdateMemberRequest;
 import com.vidcentral.api.dto.response.auth.LoginResponse;
 import com.vidcentral.api.dto.response.member.MemberInfoResponse;
 import com.vidcentral.global.auth.annotation.AuthenticationMember;
@@ -105,10 +105,10 @@ public class MemberController {
 	})
 	public ResponseEntity<String> updateMemberInfo(
 		@AuthenticationMember AuthMember authMember,
-		@Valid @RequestPart(required = false) UpdateRequest updateRequest,
+		@Valid @RequestPart(required = false) UpdateMemberRequest updateMemberRequest,
 		@RequestPart(name = "profileImageURL") MultipartFile newProfileImageURL) {
 
-		memberService.updateMemberInfo(authMember, updateRequest, newProfileImageURL);
+		memberService.updateMemberInfo(authMember, updateMemberRequest, newProfileImageURL);
 		return ResponseEntity.ok().body("성공적으로 회원 정보가 업데이트되었습니다.");
 	}
 }
