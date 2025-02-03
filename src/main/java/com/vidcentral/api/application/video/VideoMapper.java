@@ -1,8 +1,11 @@
 package com.vidcentral.api.application.video;
 
+import org.springframework.data.domain.Page;
+
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.dto.request.video.UploadVideoRequest;
+import com.vidcentral.api.dto.response.page.PageResponse;
 import com.vidcentral.api.dto.response.video.VideoDetailResponse;
 import com.vidcentral.api.dto.response.video.VideoListResponse;
 
@@ -22,12 +25,13 @@ public class VideoMapper {
 			.build();
 	}
 
-	public static VideoListResponse toVideoListResponse(Video video) {
-		return VideoListResponse.builder()
-			.nickname(video.getMember().getNickname())
-			.title(video.getTitle())
-			.videoURL(video.getVideoURL())
-			.views(video.getViews())
+	public static PageResponse<VideoListResponse> toPageResponse(Page<Video> page) {
+		return PageResponse.<VideoListResponse>builder()
+			.content(page.map(VideoMapper::toVideoListResponse).getContent())
+			.pageIndex(page.getNumber())
+			.totalPages(page.getTotalPages())
+			.totalElements(page.getTotalElements())
+			.isLast(page.isLast())
 			.build();
 	}
 
@@ -36,6 +40,15 @@ public class VideoMapper {
 			.nickname(video.getMember().getNickname())
 			.title(video.getTitle())
 			.description(video.getDescription())
+			.videoURL(video.getVideoURL())
+			.views(video.getViews())
+			.build();
+	}
+
+	public static VideoListResponse toVideoListResponse(Video video) {
+		return VideoListResponse.builder()
+			.nickname(video.getMember().getNickname())
+			.title(video.getTitle())
 			.videoURL(video.getVideoURL())
 			.views(video.getViews())
 			.build();
