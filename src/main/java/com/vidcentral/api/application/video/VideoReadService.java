@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.vidcentral.api.application.page.PageMapper;
 import com.vidcentral.api.application.recommendation.RecommendationService;
 import com.vidcentral.api.application.viewHistory.ViewHistoryService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
@@ -18,6 +19,8 @@ import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.domain.video.entity.VideoTag;
 import com.vidcentral.api.domain.video.repository.VideoRepository;
+import com.vidcentral.api.dto.request.video.SearchVideoRequest;
+import com.vidcentral.api.dto.response.page.PageResponse;
 import com.vidcentral.api.dto.response.video.VideoListResponse;
 import com.vidcentral.api.dto.response.viewHistory.ViewHistoryListResponse;
 import com.vidcentral.global.error.exception.BadRequestException;
@@ -44,7 +47,17 @@ public class VideoReadService {
 		return videoRepository.findAll(pageable);
 	}
 
-	public Set<Video> findAllVideosByKeyword(String keyword, Pageable pageable) {
+	public PageResponse<VideoListResponse> findAllVideosByKeyword(SearchVideoRequest searchVideoRequest, Pageable pageable) {
+		final Set<Video> distinctVideos = findDistinctVideosByKeyword(searchVideoRequest.keyword(), pageable);
+
+		final List<VideoListResponse> videoListResponses = distinctVideos.stream()
+			.map(VideoMapper::toVideoListResponse)
+			.toList();
+
+		return PageMapper.toPageResponse(PageMapper.toPageImpl(videoListResponses, pageable, distinctVideos.size()));
+	}
+
+	private Set<Video> findDistinctVideosByKeyword(String keyword, Pageable pageable) {
 		final Page<Video> videosFoundByTitle = findAllVideosByTitle(keyword, pageable);
 		final Page<Video> videosFoundByDescription = findAllVideosByDescription(keyword, pageable);
 
@@ -63,9 +76,9 @@ public class VideoReadService {
 		return videoRepository.findVideosByDescription(description, pageable);
 	}
 
-	public List<ViewHistoryListResponse> findAllViewHistory(AuthMember authMember) {
+	public PageResponse<ViewHistoryListResponse> findAllViewHistory(AuthMember authMember, Pageable pageable) {
 		return Optional.ofNullable(authMember)
-			.map(viewHistoryService::searchAllViewHistory)
+			.map(loginMember -> viewHistoryService.searchAllViewHistory(loginMember, pageable))
 			.orElseThrow(() -> new BadRequestException(FAILED_INVALID_REQUEST_ERROR));
 	}
 
