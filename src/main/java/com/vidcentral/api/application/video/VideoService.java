@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.vidcentral.api.application.media.MediaService;
 import com.vidcentral.api.application.member.MemberReadService;
 import com.vidcentral.api.application.page.PageMapper;
+import com.vidcentral.api.application.viewHistory.ViewHistoryService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
@@ -36,6 +37,7 @@ public class VideoService {
 	private final MemberReadService memberReadService;
 	private final VideoWriteService videoWriteService;
 	private final VideoReadService videoReadService;
+	private final ViewHistoryService viewHistoryService;
 
 	@Transactional
 	public Video uploadVideo(AuthMember authMember, UploadVideoRequest uploadVideoRequest, MultipartFile newVideoURL) {
@@ -68,8 +70,10 @@ public class VideoService {
 
 	public VideoDetailResponse searchVideo(AuthMember authMember, Long videoId) {
 		final Video video = videoReadService.findVideo(videoId);
-		videoReadService.saveViewHistory(authMember, video);
+
+		handleViewHistoryIfLoggedIn(authMember, video);
 		videoWriteService.incrementVideoViews(video);
+
 		return VideoMapper.toVideoDetailsResponse(video);
 	}
 
@@ -102,5 +106,12 @@ public class VideoService {
 
 		mediaService.deleteVideo(video.getVideoURL());
 		videoWriteService.deleteVideo(video);
+	}
+
+	private void handleViewHistoryIfLoggedIn(AuthMember authMember, Video video) {
+		if (authMember != null) {
+			final Member loginMember = memberReadService.findMember(authMember.email());
+			viewHistoryService.saveViewHistory(loginMember, video);
+		}
 	}
 }
