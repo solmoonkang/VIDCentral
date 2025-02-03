@@ -4,6 +4,7 @@ import static com.vidcentral.global.error.model.ErrorMessage.*;
 
 import java.time.Duration;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -34,6 +35,10 @@ public class HashRedisRepository {
 		final Map<String, Object> memberDataMap = hashOperations.entries(key);
 		validateTokenEmpty(memberDataMap);
 		return jackson2HashMapper.fromHash(memberDataMap);
+	}
+
+	public Set<String> getAllKeys(String pattern) {
+		return redisTemplate.keys(pattern);
 	}
 
 	public void delete(String key) {
