@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +23,7 @@ import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.dto.request.video.SearchVideoRequest;
 import com.vidcentral.api.dto.request.video.UpdateVideoRequest;
 import com.vidcentral.api.dto.request.video.UploadVideoRequest;
+import com.vidcentral.api.dto.response.page.PageResponse;
 import com.vidcentral.api.dto.response.video.VideoDetailResponse;
 import com.vidcentral.api.dto.response.video.VideoListResponse;
 import com.vidcentral.api.dto.response.viewHistory.ViewHistoryListResponse;
@@ -73,8 +75,11 @@ public class VideoController {
 		@ApiResponse(responseCode = "404", description = "실패 - 해당 비디오를 찾을 수 없습니다."),
 		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
 	})
-	public ResponseEntity<List<VideoListResponse>> searchAllVideos() {
-		return ResponseEntity.ok().body(videoService.searchAllVideos());
+	public ResponseEntity<PageResponse<VideoListResponse>> searchAllVideos(
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
+
+		return ResponseEntity.ok().body(videoService.searchAllVideos(page, size));
 	}
 
 	@GetMapping("/keyword")
