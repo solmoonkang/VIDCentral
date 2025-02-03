@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.vidcentral.api.application.member.MemberReadService;
 import com.vidcentral.api.application.recommendation.RecommendationService;
 import com.vidcentral.api.application.viewHistory.ViewHistoryService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
@@ -32,7 +31,6 @@ public class VideoReadService {
 
 	private static final int MAX_TAG_COUNT = 3;
 
-	private final MemberReadService memberReadService;
 	private final ViewHistoryService viewHistoryService;
 	private final RecommendationService recommendationService;
 	private final VideoRepository videoRepository;
@@ -63,11 +61,6 @@ public class VideoReadService {
 
 	private Page<Video> findAllVideosByDescription(String description, Pageable pageable) {
 		return videoRepository.findVideosByDescription(description, pageable);
-	}
-
-	public void saveViewHistory(AuthMember authMember, Video video) {
-		final Member loginMember = memberReadService.findMember(authMember.email());
-		viewHistoryService.saveViewHistory(loginMember, video);
 	}
 
 	public List<ViewHistoryListResponse> findAllViewHistory(AuthMember authMember) {
