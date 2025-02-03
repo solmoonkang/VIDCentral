@@ -19,7 +19,8 @@ public class TokenRepository {
 	private final HashRedisRepository hashRedisRepository;
 
 	public void saveToken(String email, TokenSaveResponse tokenSaveResponse) {
-		hashRedisRepository.save(REDIS_REFRESH_TOKEN_PREFIX + email, tokenSaveResponse, Duration.ofDays(EXPIRE_DAYS));
+		hashRedisRepository
+			.save(REDIS_REFRESH_TOKEN_PREFIX + email, tokenSaveResponse, Duration.ofDays(TOKEN_EXPIRE_DAYS));
 	}
 
 	public TokenSaveResponse getTokenSaveValue(String email) {
