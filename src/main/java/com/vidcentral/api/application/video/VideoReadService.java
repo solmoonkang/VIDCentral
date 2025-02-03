@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.vidcentral.api.application.member.MemberReadService;
@@ -39,8 +41,8 @@ public class VideoReadService {
 			.orElseThrow(() -> new NotFoundException(FAILED_VIDEO_NOT_FOUND_ERROR));
 	}
 
-	public List<Video> findAllVideos() {
-		return videoRepository.findAll();
+	public Page<Video> findAllVideos(Pageable pageable) {
+		return videoRepository.findAll(pageable);
 	}
 
 	public List<Video> findAllVideosByTitle(String title) {
