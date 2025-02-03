@@ -2,6 +2,7 @@ package com.vidcentral.api.application.video;
 
 import static com.vidcentral.global.error.model.ErrorMessage.*;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -45,12 +46,23 @@ public class VideoReadService {
 		return videoRepository.findAll(pageable);
 	}
 
-	public List<Video> findAllVideosByTitle(String title) {
-		return videoRepository.findVideosByTitle(title);
+	public Set<Video> findAllVideosByKeyword(String keyword, Pageable pageable) {
+		final Page<Video> videosFoundByTitle = findAllVideosByTitle(keyword, pageable);
+		final Page<Video> videosFoundByDescription = findAllVideosByDescription(keyword, pageable);
+
+		final Set<Video> distinctVideos = new HashSet<>();
+		distinctVideos.addAll(videosFoundByTitle.getContent());
+		distinctVideos.addAll(videosFoundByDescription.getContent());
+
+		return distinctVideos;
 	}
 
-	public List<Video> findAllVideosByDescription(String description) {
-		return videoRepository.findVideosByDescription(description);
+	private Page<Video> findAllVideosByTitle(String title, Pageable pageable) {
+		return videoRepository.findVideosByTitle(title, pageable);
+	}
+
+	private Page<Video> findAllVideosByDescription(String description, Pageable pageable) {
+		return videoRepository.findVideosByDescription(description, pageable);
 	}
 
 	public void saveViewHistory(AuthMember authMember, Video video) {
