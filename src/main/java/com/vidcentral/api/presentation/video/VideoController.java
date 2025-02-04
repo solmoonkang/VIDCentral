@@ -26,6 +26,7 @@ import com.vidcentral.api.dto.response.history.ViewHistoryListResponse;
 import com.vidcentral.api.dto.response.page.PageResponse;
 import com.vidcentral.api.dto.response.video.VideoDetailResponse;
 import com.vidcentral.api.dto.response.video.VideoListResponse;
+import com.vidcentral.api.dto.response.video.VideoRecommendResponse;
 import com.vidcentral.global.auth.annotation.AuthenticationMember;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -141,7 +142,7 @@ public class VideoController {
 		return ResponseEntity.ok().body(videoService.searchAllViewHistory(authMember, page, size));
 	}
 
-	@GetMapping("/recommendation")
+	@GetMapping("/recommend")
 	@ResponseStatus(HttpStatus.OK)
 	@Operation(
 		summary = "추천 비디오 목록 조회 API",
@@ -152,12 +153,12 @@ public class VideoController {
 		@ApiResponse(responseCode = "404", description = "실패 - 해당 회원을 찾을 수 없습니다."),
 		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
 	})
-	public ResponseEntity<PageResponse<VideoListResponse>> searchAllRecommendationVideos(
+	public ResponseEntity<PageResponse<VideoRecommendResponse>> searchAllRecommendVideos(
 		@AuthenticationMember AuthMember authMember,
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "10") int size) {
 
-		return ResponseEntity.ok().body(videoService.searchAllRecommendationVideos(authMember, page, size));
+		return ResponseEntity.ok().body(videoService.searchAllRecommendVideos(authMember, page, size));
 	}
 
 	@PutMapping("/update/{videoId}")
