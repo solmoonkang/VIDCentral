@@ -2,6 +2,7 @@ package com.vidcentral.api.application.video;
 
 import static com.vidcentral.global.error.model.ErrorMessage.*;
 
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
@@ -27,6 +28,10 @@ public class VideoReadService {
 	public Video findVideo(Long videoId) {
 		return videoRepository.findById(videoId)
 			.orElseThrow(() -> new NotFoundException(FAILED_VIDEO_NOT_FOUND_ERROR));
+	}
+
+	public List<Video> findAllVideoIds(List<Long> videoIds) {
+		return videoRepository.findAllById(videoIds);
 	}
 
 	public Page<Video> findAllVideos(Pageable pageable) {
