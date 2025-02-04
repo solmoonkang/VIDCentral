@@ -8,20 +8,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.vidcentral.api.application.history.SearchHistoryService;
+import com.vidcentral.api.application.history.ViewHistoryService;
 import com.vidcentral.api.application.media.MediaService;
 import com.vidcentral.api.application.member.MemberReadService;
 import com.vidcentral.api.application.page.PageMapper;
-import com.vidcentral.api.application.viewHistory.ViewHistoryService;
+import com.vidcentral.api.application.recommendation.RecommendationService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.dto.request.video.SearchVideoRequest;
 import com.vidcentral.api.dto.request.video.UpdateVideoRequest;
 import com.vidcentral.api.dto.request.video.UploadVideoRequest;
+import com.vidcentral.api.dto.response.history.ViewHistoryListResponse;
 import com.vidcentral.api.dto.response.page.PageResponse;
 import com.vidcentral.api.dto.response.video.VideoDetailResponse;
 import com.vidcentral.api.dto.response.video.VideoListResponse;
-import com.vidcentral.api.dto.response.viewHistory.ViewHistoryListResponse;
+import com.vidcentral.api.dto.response.video.VideoRecommendResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,6 +38,8 @@ public class VideoService {
 	private final VideoWriteService videoWriteService;
 	private final VideoReadService videoReadService;
 	private final ViewHistoryService viewHistoryService;
+	private final SearchHistoryService searchHistoryService;
+	private final RecommendationService recommendationService;
 
 	@Transactional
 	public Video uploadVideo(AuthMember authMember, UploadVideoRequest uploadVideoRequest, MultipartFile newVideoURL) {
@@ -52,10 +57,11 @@ public class VideoService {
 		return PageMapper.toPageResponse(videoPage.map(VideoMapper::toVideoListResponse));
 	}
 
-	public PageResponse<VideoListResponse> searchAllVideosByKeyword(
+	public PageResponse<VideoListResponse> searchAllVideosByKeyword(AuthMember authMember,
 		SearchVideoRequest searchVideoRequest, int page, int size) {
 
-		return videoReadService.findAllVideosByKeyword(searchVideoRequest, PageRequest.of(page, size));
+		return searchHistoryService.searchAllVideosByKeyword(authMember, searchVideoRequest,
+			PageRequest.of(page, size));
 	}
 
 	public VideoDetailResponse searchVideo(AuthMember authMember, Long videoId) {
@@ -66,12 +72,12 @@ public class VideoService {
 	}
 
 	public PageResponse<ViewHistoryListResponse> searchAllViewHistory(AuthMember authMember, int page, int size) {
-		return videoReadService.findAllViewHistory(authMember, PageRequest.of(page, size));
+		return viewHistoryService.findAllViewHistory(authMember, PageRequest.of(page, size));
 	}
 
-	public PageResponse<VideoListResponse> searchAllRecommendationVideos(AuthMember authMember, int page, int size) {
+	public PageResponse<VideoRecommendResponse> searchAllRecommendVideos(AuthMember authMember, int page, int size) {
 		final Member loginMember = memberReadService.findMember(authMember.email());
-		return videoReadService.findAllRecommendationVideos(loginMember, PageRequest.of(page, size));
+		return recommendationService.findAllRecommendVideos(loginMember, PageRequest.of(page, size));
 	}
 
 	@Transactional

@@ -1,5 +1,6 @@
 package com.vidcentral.api.domain.like.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,5 +15,5 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
 
 	Optional<Like> findLikeByVideoAndMember(Video video, Member member);
 
-	Optional<Like> findLikeByMember(Member member);
+	List<Like> findAllByMember(Member member);
 }

@@ -1,9 +1,8 @@
-package com.vidcentral.api.domain.viewHistory.entity;
+package com.vidcentral.api.domain.history.entity;
 
 import java.time.LocalDateTime;
 
 import com.vidcentral.api.domain.member.entity.Member;
-import com.vidcentral.api.domain.video.entity.Video;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,7 +10,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -22,32 +20,29 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "VIEW_HISTORIES",
-	indexes = {
-		@Index(name = "IDX_MEMBER_VIDEO", columnList = "member_id, video_id", unique = true)
-	})
+@Table(name = "SEARCH_HISTORIES")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ViewHistory {
+public class SearchHistory {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long viewHistoryId;
+	@Column(name = "search_history_id")
+	private Long searchHistoryId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "video_id", nullable = false)
-	private Video video;
+	@Column(name = "search_keyword", nullable = false)
+	private String searchKeyword;
 
-	@Column(name = "watched_at")
-	private LocalDateTime watchedAt;
+	@Column(name = "search_at", nullable = false)
+	private LocalDateTime searchAt;
 
 	@Builder
-	private ViewHistory(Member member, Video video) {
+	private SearchHistory(Member member, String searchKeyword) {
 		this.member = member;
-		this.video = video;
-		this.watchedAt = LocalDateTime.now();
+		this.searchKeyword = searchKeyword;
+		this.searchAt = LocalDateTime.now();
 	}
 }

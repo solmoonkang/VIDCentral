@@ -1,8 +1,8 @@
 package com.vidcentral.api.application.video;
 
 import static com.vidcentral.global.common.util.GlobalConstant.*;
-import static com.vidcentral.global.common.util.RedisConstant.*;
 
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.scheduling.annotation.Async;
@@ -45,16 +45,22 @@ public class VideoWriteService {
 
 	@Scheduled(fixedRate = 600000)
 	public void syncVideoViewsFromRedisToMySQL() {
-		Set<String> videoKeys = videoManageRepository.findAllKeys(REDIS_VIDEO_VIEW_PREFIX + WILDCARD);
+		final Set<String> videoKeys = videoManageRepository.findAllVideoIds();
 
-		for (String key : videoKeys) {
-			final Long videoId = Long.parseLong(key.split(COLON_DELIMITER)[1]);
+		final List<Long> videoIds = videoKeys.stream()
+			.map(key -> Long.parseLong(key.split(COLON_DELIMITER)[1]))
+			.toList();
+
+		videoIds.forEach(videoId -> {
 			final Long views = videoManageRepository.findViews(videoId);
+			updateVideoViews(videoId, views);
+		});
+	}
 
-			if (views != null) {
-				videoRepository.incrementViews(videoId, views);
-				videoManageRepository.deleteViews(videoId);
-			}
+	private void updateVideoViews(Long videoId, Long views) {
+		if (views != null) {
+			videoRepository.incrementViews(videoId, views);
+			videoManageRepository.deleteViews(videoId);
 		}
 	}
 }

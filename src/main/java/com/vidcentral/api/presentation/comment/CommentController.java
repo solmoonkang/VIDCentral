@@ -58,11 +58,11 @@ public class CommentController {
 	@GetMapping("/{videoId}")
 	@ResponseStatus(HttpStatus.OK)
 	@Operation(
-		summary = "모든 댓글 조회 API",
-		description = "모든 댓글을 조회합니다."
+		summary = "댓글 목록 조회 API",
+		description = "사용자가 댓글 목록을 조회합니다."
 	)
 	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "성공 - 모든 댓글 조회, 모든 댓글 정보를 조회했습니다."),
+		@ApiResponse(responseCode = "200", description = "성공 - 댓글 목록 조회, 모든 댓글 정보를 조회했습니다."),
 		@ApiResponse(responseCode = "404", description = "실패 - 해당 회원을 찾을 수 없습니다."),
 		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
 	})
@@ -100,7 +100,7 @@ public class CommentController {
 	@ResponseStatus(HttpStatus.OK)
 	@Operation(
 		summary = "댓글 삭제 API",
-		description = "사용자가 댓글을 삭제합니다."
+		description = "사용자가 댓글 내용을 삭제합니다."
 	)
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "성공 - 댓글 삭제, 댓글 정보가 삭제되었습니다."),
