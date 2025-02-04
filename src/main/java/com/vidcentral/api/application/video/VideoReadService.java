@@ -2,7 +2,6 @@ package com.vidcentral.api.application.video;
 
 import static com.vidcentral.global.error.model.ErrorMessage.*;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -47,34 +46,18 @@ public class VideoReadService {
 		return videoRepository.findAll(pageable);
 	}
 
-	public PageResponse<VideoListResponse> findAllVideosByKeyword(SearchVideoRequest searchVideoRequest,
-		Pageable pageable) {
-		final Set<Video> distinctVideos = findDistinctVideosByKeyword(searchVideoRequest.keyword(), pageable);
+	public PageResponse<VideoListResponse> findAllVideosByKeyword(
+		SearchVideoRequest searchVideoRequest, Pageable pageable) {
 
-		final List<VideoListResponse> videoListResponses = distinctVideos.stream()
+		final Page<Video> distinctVideos = videoRepository
+			.findDistinctVideosByKeyword(searchVideoRequest.keyword(), pageable);
+
+		final List<VideoListResponse> videoListResponses = distinctVideos.getContent().stream()
 			.map(VideoMapper::toVideoListResponse)
 			.toList();
 
-		return PageMapper.toPageResponse(PageMapper.toPageImpl(videoListResponses, pageable, distinctVideos.size()));
-	}
-
-	private Set<Video> findDistinctVideosByKeyword(String keyword, Pageable pageable) {
-		final Page<Video> videosFoundByTitle = findAllVideosByTitle(keyword, pageable);
-		final Page<Video> videosFoundByDescription = findAllVideosByDescription(keyword, pageable);
-
-		final Set<Video> distinctVideos = new HashSet<>();
-		distinctVideos.addAll(videosFoundByTitle.getContent());
-		distinctVideos.addAll(videosFoundByDescription.getContent());
-
-		return distinctVideos;
-	}
-
-	private Page<Video> findAllVideosByTitle(String title, Pageable pageable) {
-		return videoRepository.findVideosByTitle(title, pageable);
-	}
-
-	private Page<Video> findAllVideosByDescription(String description, Pageable pageable) {
-		return videoRepository.findVideosByDescription(description, pageable);
+		return PageMapper.toPageResponse(
+			PageMapper.toPageImpl(videoListResponses, pageable, distinctVideos.getTotalElements()));
 	}
 
 	public PageResponse<ViewHistoryListResponse> findAllViewHistory(AuthMember authMember, Pageable pageable) {
