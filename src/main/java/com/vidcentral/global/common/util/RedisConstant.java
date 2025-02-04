@@ -10,6 +10,7 @@ public class RedisConstant {
 	public static final String REDIS_VIDEO_VIEW_PREFIX = "videoView:";
 	public static final String REDIS_SEARCH_HISTORY_PREFIX = "searchHistory:";
 
-	public static final int TOKEN_EXPIRE_DAYS = 14;
-	public static final int VIEWS_EXPIRE_MIN = 5;
+	public static final int TOKEN_EXPIRE_MINUTES = 20_160;
+	public static final int VIEWS_EXPIRE_MINUTES = 5;
+	public static final int SEARCH_EXPIRE_MINUTES = 43_200;
 }

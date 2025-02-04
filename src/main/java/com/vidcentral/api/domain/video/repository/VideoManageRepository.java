@@ -18,7 +18,7 @@ public class VideoManageRepository {
 	private final HashRedisRepository hashRedisRepository;
 
 	public void incrementViews(Long videoId) {
-		hashRedisRepository.save(REDIS_VIDEO_VIEW_PREFIX + videoId, 1L, Duration.ofMinutes(VIEWS_EXPIRE_MIN));
+		hashRedisRepository.save(REDIS_VIDEO_VIEW_PREFIX + videoId, 1L, Duration.ofMinutes(VIEWS_EXPIRE_MINUTES));
 	}
 
 	public Set<String> findAllKeys(String pattern) {
