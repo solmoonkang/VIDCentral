@@ -17,7 +17,7 @@ import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.domain.history.entity.ViewHistory;
 import com.vidcentral.api.domain.history.repository.ViewHistoryRepository;
 import com.vidcentral.api.dto.response.page.PageResponse;
-import com.vidcentral.api.dto.response.viewHistory.ViewHistoryListResponse;
+import com.vidcentral.api.dto.response.history.ViewHistoryListResponse;
 import com.vidcentral.global.error.exception.BadRequestException;
 
 import lombok.RequiredArgsConstructor;

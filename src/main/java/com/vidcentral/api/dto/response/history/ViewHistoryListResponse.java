@@ -1,4 +1,4 @@
-package com.vidcentral.api.dto.response.viewHistory;
+package com.vidcentral.api.dto.response.history;
 
 import java.time.LocalDateTime;
 
