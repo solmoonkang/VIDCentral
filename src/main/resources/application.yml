@@ -14,7 +14,7 @@ spring:
 
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:tcp://localhost/~/vid-central
+    url: jdbc:h2:mem:testdb
     username: sa
     password:
 
@@ -38,4 +38,12 @@ cloud:
     credentials:
       access-key: AKIA6GBMC2D2YIVKY3ZB
       secret-key: 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
-    region: ap-northeast-2
+    region:
+      static: ap-northeast-2
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+  file:
+    name: application.log
