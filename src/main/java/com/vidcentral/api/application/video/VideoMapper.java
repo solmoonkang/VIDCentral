@@ -1,9 +1,12 @@
 package com.vidcentral.api.application.video;
 
+import java.util.Set;
+
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.dto.request.video.UploadVideoRequest;
 import com.vidcentral.api.dto.response.video.VideoDetailResponse;
+import com.vidcentral.api.dto.response.video.VideoInfoResponse;
 import com.vidcentral.api.dto.response.video.VideoListResponse;
 import com.vidcentral.api.dto.response.video.VideoRecommendResponse;
 
@@ -49,6 +52,13 @@ public class VideoMapper {
 			.videoId(videoId)
 			.videoListResponse(videoListResponse)
 			.score(score)
+			.build();
+	}
+
+	public static VideoInfoResponse toVideoInfoResponse(Set<Long> viewedVideoIds, Set<Long> likedVideoIds) {
+		return VideoInfoResponse.builder()
+			.viewedVideoIds(viewedVideoIds)
+			.likedVideoIds(likedVideoIds)
 			.build();
 	}
 }
