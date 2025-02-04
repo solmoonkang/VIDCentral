@@ -24,6 +24,7 @@ import com.vidcentral.api.dto.response.history.ViewHistoryListResponse;
 import com.vidcentral.api.dto.response.page.PageResponse;
 import com.vidcentral.api.dto.response.video.VideoDetailResponse;
 import com.vidcentral.api.dto.response.video.VideoListResponse;
+import com.vidcentral.api.dto.response.video.VideoRecommendResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -74,9 +75,9 @@ public class VideoService {
 		return viewHistoryService.findAllViewHistory(authMember, PageRequest.of(page, size));
 	}
 
-	public PageResponse<VideoListResponse> searchAllRecommendationVideos(AuthMember authMember, int page, int size) {
+	public PageResponse<VideoRecommendResponse> searchAllRecommendVideos(AuthMember authMember, int page, int size) {
 		final Member loginMember = memberReadService.findMember(authMember.email());
-		return recommendationService.findAllRecommendationVideos(loginMember, PageRequest.of(page, size));
+		return recommendationService.findAllRecommendVideos(loginMember, PageRequest.of(page, size));
 	}
 
 	@Transactional
