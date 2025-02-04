@@ -1,4 +1,4 @@
-package com.vidcentral.api.domain.viewHistory.entity;
+package com.vidcentral.api.domain.history.entity;
 
 import java.time.LocalDateTime;
 

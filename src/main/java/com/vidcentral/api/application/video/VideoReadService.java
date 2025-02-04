@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.vidcentral.api.application.page.PageMapper;
 import com.vidcentral.api.application.recommendation.RecommendationService;
-import com.vidcentral.api.application.viewHistory.ViewHistoryService;
+import com.vidcentral.api.application.history.ViewHistoryService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;

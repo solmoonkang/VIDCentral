@@ -1,8 +1,8 @@
-package com.vidcentral.api.application.viewHistory;
+package com.vidcentral.api.application.history;
 
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
-import com.vidcentral.api.domain.viewHistory.entity.ViewHistory;
+import com.vidcentral.api.domain.history.entity.ViewHistory;
 import com.vidcentral.api.dto.response.viewHistory.ViewHistoryListResponse;
 
 import lombok.AccessLevel;

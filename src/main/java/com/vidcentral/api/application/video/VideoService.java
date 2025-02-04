@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.vidcentral.api.application.media.MediaService;
 import com.vidcentral.api.application.member.MemberReadService;
 import com.vidcentral.api.application.page.PageMapper;
-import com.vidcentral.api.application.viewHistory.ViewHistoryService;
+import com.vidcentral.api.application.history.ViewHistoryService;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;

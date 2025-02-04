@@ -1,4 +1,4 @@
-package com.vidcentral.api.application.viewHistory;
+package com.vidcentral.api.application.history;
 
 import java.util.List;
 
@@ -11,8 +11,8 @@ import com.vidcentral.api.application.page.PageMapper;
 import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
-import com.vidcentral.api.domain.viewHistory.entity.ViewHistory;
-import com.vidcentral.api.domain.viewHistory.repository.ViewHistoryRepository;
+import com.vidcentral.api.domain.history.entity.ViewHistory;
+import com.vidcentral.api.domain.history.repository.ViewHistoryRepository;
 import com.vidcentral.api.dto.response.page.PageResponse;
 import com.vidcentral.api.dto.response.viewHistory.ViewHistoryListResponse;
 
