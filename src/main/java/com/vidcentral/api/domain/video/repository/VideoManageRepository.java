@@ -1,5 +1,6 @@
 package com.vidcentral.api.domain.video.repository;
 
+import static com.vidcentral.global.common.util.GlobalConstant.*;
 import static com.vidcentral.global.common.util.RedisConstant.*;
 
 import java.time.Duration;
@@ -21,8 +22,8 @@ public class VideoManageRepository {
 		hashRedisRepository.save(REDIS_VIDEO_VIEW_PREFIX + videoId, 1L, Duration.ofMinutes(VIEWS_EXPIRE_MINUTES));
 	}
 
-	public Set<String> findAllKeys(String pattern) {
-		return hashRedisRepository.getAllKeys(pattern);
+	public Set<String> findAllVideoIds() {
+		return hashRedisRepository.getAllKeys(REDIS_VIDEO_VIEW_PREFIX + WILDCARD);
 	}
 
 	public Long findViews(Long videoId) {
