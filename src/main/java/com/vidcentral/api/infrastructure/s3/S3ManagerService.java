@@ -21,9 +21,6 @@ public class S3ManagerService {
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucketName;
 
-	@Value("${cloud.aws.cloudfront.domain}")
-	private String cloudFrontURL;
-
 	public String uploadFile(String key, MultipartFile multipartFile) {
 		try {
 			PutObjectRequest putObjectRequest = PutObjectRequest.builder()
@@ -35,14 +32,14 @@ public class S3ManagerService {
 			s3Client.putObject(putObjectRequest,
 				RequestBody.fromInputStream(multipartFile.getInputStream(), multipartFile.getSize()));
 
-			return cloudFrontURL + key;
+			return "https://" + bucketName + ".s3.ap-northeast-2.amazonaws.com/" + key;
 		} catch (IOException e) {
 			throw new RuntimeException("파일 업로드 실패", e);
 		}
 	}
 
 	public void deleteFile(String objectURL) {
-		String key = objectURL.replace(cloudFrontURL, "");
+		String key = objectURL.replace("https://" + bucketName + ".s3.ap-northeast-2.amazonaws.com/", "");
 
 		DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
 			.bucket(bucketName)
