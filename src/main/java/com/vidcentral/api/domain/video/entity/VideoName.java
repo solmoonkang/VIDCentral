@@ -14,14 +14,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class VideoName {
 
-	private static final String VIDEO_PATH = "video" + DELIMITER;
+	private static final String VIDEO_PATH = "video" + SLASH_DELIMITER;
 
 	private final String fileName;
 
 	public static VideoName createFromMultipartFile(MultipartFile multipartFile, VideoProperties videoProperties) {
 		return switch (videoProperties) {
-			case DEFAULT_VIDEO ->
-				new VideoName(VIDEO_PATH + multipartFile.getOriginalFilename() + "_" + UUID.randomUUID() + VIDEO_EXTENSION);
+			case DEFAULT_VIDEO -> new VideoName(
+				VIDEO_PATH + multipartFile.getOriginalFilename() + "_" + UUID.randomUUID() + VIDEO_EXTENSION);
 		};
 	}
 }

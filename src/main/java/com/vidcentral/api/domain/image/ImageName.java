@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ImageName {
 
-	private static final String PROFILE_IMAGE = "members/profile" + DELIMITER;
+	private static final String PROFILE_IMAGE = "members/profile" + SLASH_DELIMITER;
 
 	private final String fileName;
 
