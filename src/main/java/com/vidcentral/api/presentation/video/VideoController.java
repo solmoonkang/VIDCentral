@@ -22,10 +22,10 @@ import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.dto.request.video.SearchVideoRequest;
 import com.vidcentral.api.dto.request.video.UpdateVideoRequest;
 import com.vidcentral.api.dto.request.video.UploadVideoRequest;
+import com.vidcentral.api.dto.response.history.ViewHistoryListResponse;
 import com.vidcentral.api.dto.response.page.PageResponse;
 import com.vidcentral.api.dto.response.video.VideoDetailResponse;
 import com.vidcentral.api.dto.response.video.VideoListResponse;
-import com.vidcentral.api.dto.response.viewHistory.ViewHistoryListResponse;
 import com.vidcentral.global.auth.annotation.AuthenticationMember;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -94,11 +94,13 @@ public class VideoController {
 		@ApiResponse(responseCode = "500", description = "실패 - 서버 오류, 요청 처리 중 문제가 발생했습니다.")
 	})
 	public ResponseEntity<PageResponse<VideoListResponse>> searchAllVideosByKeyword(
+		@AuthenticationMember AuthMember authMember,
 		@Valid @RequestPart(required = false) SearchVideoRequest searchVideoRequest,
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "10") int size) {
 
-		return ResponseEntity.ok().body(videoService.searchAllVideosByKeyword(searchVideoRequest, page, size));
+		return ResponseEntity.ok()
+			.body(videoService.searchAllVideosByKeyword(authMember, searchVideoRequest, page, size));
 	}
 
 	@GetMapping("/{videoId}")
