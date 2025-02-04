@@ -2,26 +2,15 @@ package com.vidcentral.api.application.video;
 
 import static com.vidcentral.global.error.model.ErrorMessage.*;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.vidcentral.api.application.page.PageMapper;
-import com.vidcentral.api.application.recommendation.RecommendationService;
-import com.vidcentral.api.application.history.ViewHistoryService;
-import com.vidcentral.api.domain.auth.entity.AuthMember;
-import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.video.entity.Video;
 import com.vidcentral.api.domain.video.entity.VideoTag;
 import com.vidcentral.api.domain.video.repository.VideoRepository;
-import com.vidcentral.api.dto.request.video.SearchVideoRequest;
-import com.vidcentral.api.dto.response.page.PageResponse;
-import com.vidcentral.api.dto.response.video.VideoListResponse;
-import com.vidcentral.api.dto.response.viewHistory.ViewHistoryListResponse;
 import com.vidcentral.global.error.exception.BadRequestException;
 import com.vidcentral.global.error.exception.NotFoundException;
 
@@ -33,8 +22,6 @@ public class VideoReadService {
 
 	private static final int MAX_TAG_COUNT = 3;
 
-	private final ViewHistoryService viewHistoryService;
-	private final RecommendationService recommendationService;
 	private final VideoRepository videoRepository;
 
 	public Video findVideo(Long videoId) {
@@ -44,35 +31,6 @@ public class VideoReadService {
 
 	public Page<Video> findAllVideos(Pageable pageable) {
 		return videoRepository.findAll(pageable);
-	}
-
-	public PageResponse<VideoListResponse> findAllVideosByKeyword(
-		SearchVideoRequest searchVideoRequest, Pageable pageable) {
-
-		final Page<Video> distinctVideos = videoRepository
-			.findDistinctVideosByKeyword(searchVideoRequest.keyword(), pageable);
-
-		final List<VideoListResponse> videoListResponses = distinctVideos.getContent().stream()
-			.map(VideoMapper::toVideoListResponse)
-			.toList();
-
-		return PageMapper.toPageResponse(
-			PageMapper.toPageImpl(videoListResponses, pageable, distinctVideos.getTotalElements()));
-	}
-
-	public PageResponse<ViewHistoryListResponse> findAllViewHistory(AuthMember authMember, Pageable pageable) {
-		return Optional.ofNullable(authMember)
-			.map(loginMember -> viewHistoryService.searchAllViewHistory(loginMember, pageable))
-			.orElseThrow(() -> new BadRequestException(FAILED_INVALID_REQUEST_ERROR));
-	}
-
-	public PageResponse<VideoListResponse> findAllRecommendationVideos(Member member, Pageable pageable) {
-		final Set<VideoTag> likedVideoTags = recommendationService.extractLikedVideoTags(member);
-		final Set<String> likedVideoTitles = recommendationService.extractLikedVideoTitle(member);
-		final Set<VideoTag> viewHistoryVideoTags = recommendationService.extractViewHistoryVideoTags(member);
-
-		return recommendationService
-			.findRecommendationVideos(likedVideoTags, likedVideoTitles, viewHistoryVideoTags, pageable);
 	}
 
 	public void validateMemberHasAccess(String videoOwnerEmail, String authMemberEmail) {
