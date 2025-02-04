@@ -34,10 +34,8 @@ spring:
 cloud:
   aws:
     s3:
-      bucket: your-bucket-name
-    cloudfront:
-      domain: your-cloudfront-domain
+      bucket: vidcentral-bucket
     credentials:
-      access-key: your-access-key
-      secret-key: your-secret-key
-    region: your-region
+      access-key: AKIA6GBMC2D2YIVKY3ZB
+      secret-key: pOFpsXwucs5Oxkp7tfY6tdjc76vGyCDgvbt7/E09
+    region: ap-northeast-2
