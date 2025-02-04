@@ -32,7 +32,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "VIDEOS",
 	indexes = {
 		@Index(name = "IDX_VIDEO_ID", columnList = "video_id", unique = true),
-		@Index(name = "IDX_VIDEO_TITLE", columnList = "title")
+		@Index(name = "IDX_VIDEO_TITLE", columnList = "title"),
+		@Index(name = "IDX_VIDEO_DESCRIPTION", columnList = "description")
 	})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Video extends BaseTimeEntity {
@@ -91,9 +92,5 @@ public class Video extends BaseTimeEntity {
 
 	public void updateVideoTags(Set<VideoTag> videoTags) {
 		this.videoTags = requireNonNullElse(videoTags, this.videoTags);
-	}
-
-	public void incrementViews() {
-		this.views++;
 	}
 }
