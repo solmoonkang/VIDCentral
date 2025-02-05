@@ -1,5 +1,6 @@
 package com.vidcentral.api.domain.image;
 
+import static com.vidcentral.global.common.util.MediaConstant.*;
 import static com.vidcentral.global.error.model.ErrorMessage.*;
 
 import java.awt.*;
@@ -19,10 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 public record ImageProcessor(
 	MultipartFile originalImageFile
 ) {
-
-	private static final String IMAGE_FORMAT_PREFIX = "image/";
-	private static final int MAX_IMAGE_SIZE = 10 * 1024 * 1024;
-
 	public ImageProcessor(MultipartFile originalImageFile) {
 		this.originalImageFile = validateImage(originalImageFile);
 	}
@@ -39,8 +36,9 @@ public record ImageProcessor(
 	}
 
 	private MultipartFile validateImage(MultipartFile imageFile) {
-		if (imageFile.isEmpty() || imageFile.getSize() > MAX_IMAGE_SIZE || !imageFile.getContentType()
-			.startsWith(IMAGE_FORMAT_PREFIX)) {
+		if (imageFile.isEmpty() || imageFile.getSize() > MAX_IMAGE_SIZE ||
+			!ImageProperties.isSupportedContentType(imageFile.getContentType())) {
+
 			throw new BadRequestException(FAILED_S3_RESIZE_ERROR);
 		}
 
