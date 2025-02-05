@@ -1,7 +1,5 @@
 package com.vidcentral.api.application.video;
 
-import static com.vidcentral.api.domain.video.entity.VideoProperties.*;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -43,7 +41,7 @@ public class VideoService {
 
 	@Transactional
 	public Video uploadVideo(AuthMember authMember, UploadVideoRequest uploadVideoRequest, MultipartFile newVideoURL) {
-		final String videoURL = mediaService.uploadVideo(newVideoURL, DEFAULT_VIDEO);
+		final String videoURL = mediaService.uploadVideo(newVideoURL);
 		final Member loginMember = memberReadService.findMember(authMember.email());
 
 		videoReadService.validateTagCount(uploadVideoRequest.videoTags());
@@ -90,7 +88,7 @@ public class VideoService {
 		videoReadService.validateMemberHasAccess(video.getMember().getEmail(), loginMember.getEmail());
 		videoReadService.validateTagCount(updateVideoRequest.videoTags());
 
-		final String newVideoURL = mediaService.uploadVideo(videoURL, DEFAULT_VIDEO);
+		final String newVideoURL = mediaService.uploadVideo(videoURL);
 		videoWriteService.updateVideo(video, updateVideoRequest, newVideoURL);
 	}
 
