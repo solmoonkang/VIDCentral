@@ -35,7 +35,8 @@ public class SecurityConfig {
 	};
 	private static final String[] MEMBER_INFO_ENDPOINTS = {
 		"/api/members/**",
-		"/api/videos/**"
+		"/api/videos/**",
+		"/api/comments/**"
 	};
 
 	@Bean
@@ -46,8 +47,7 @@ public class SecurityConfig {
 			.requestMatchers("/v3/api-docs/**")
 			.requestMatchers("/swagger-ui/**")
 			.requestMatchers("/swagger-resources/**")
-			.requestMatchers(HttpMethod.POST, AUTHENTICATION_REQUEST_ENDPOINTS)
-			.requestMatchers(HttpMethod.GET, MEMBER_INFO_ENDPOINTS);
+			.requestMatchers(HttpMethod.POST, AUTHENTICATION_REQUEST_ENDPOINTS);
 	}
 
 	@Bean
@@ -57,8 +57,8 @@ public class SecurityConfig {
 			.sessionManagement(session -> session.sessionCreationPolicy(STATELESS));
 
 		httpSecurity.authorizeHttpRequests(auth -> auth
-			.requestMatchers("/").authenticated()
-			.anyRequest().permitAll());
+			.requestMatchers(HttpMethod.GET, MEMBER_INFO_ENDPOINTS).permitAll()
+			.anyRequest().authenticated());
 
 		httpSecurity.addFilterBefore(
 			new AuthenticationFilter(jwtProviderService, handlerExceptionResolver),
