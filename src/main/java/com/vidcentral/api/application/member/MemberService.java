@@ -1,7 +1,5 @@
 package com.vidcentral.api.application.member;
 
-import static com.vidcentral.api.domain.image.ImageProperties.*;
-
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -60,7 +58,7 @@ public class MemberService {
 		final Member loginMember = memberReadService.findMember(authMember.email());
 		memberReadService.validateNicknameDuplication(updateMemberRequest.nickname());
 
-		String newProfileImageURL = mediaService.uploadImages(List.of(profileImageURL), PROFILE_IMAGE).get(0);
+		String newProfileImageURL = mediaService.uploadImages(List.of(profileImageURL)).get(0);
 		memberWriteService.changeMemberInfo(loginMember, updateMemberRequest, newProfileImageURL);
 	}
 }
