@@ -1,7 +1,7 @@
 package com.vidcentral.api.domain.image;
 
-import static com.vidcentral.global.common.util.GlobalConstant.*;
-
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -14,14 +14,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ImageName {
 
-	private static final String PROFILE_IMAGE = "members/profile" + SLASH_DELIMITER;
-
 	private final String fileName;
 
-	public static ImageName createFromMultipartFile(MultipartFile multipartFile, ImageProperties imageProperties) {
-		return switch (imageProperties) {
-			case PROFILE_IMAGE ->
-				new ImageName(PROFILE_IMAGE + multipartFile.getName() + "_" + UUID.randomUUID() + IMAGE_EXTENSION);
-		};
+	public static ImageName createFromMultipartFile(MultipartFile multipartFile) {
+		final String originalFileName = multipartFile.getOriginalFilename();
+		final String fileExtension = originalFileName.substring(originalFileName.lastIndexOf('.'));
+		final String encodedFileName = URLEncoder.encode(originalFileName, StandardCharsets.UTF_8);
+
+		return new ImageName(
+			String.format("%s_%s%s", encodedFileName, UUID.randomUUID(), fileExtension));
 	}
 }
