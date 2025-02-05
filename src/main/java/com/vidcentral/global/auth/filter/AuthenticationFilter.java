@@ -47,8 +47,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 			}
 
 			if (jwtProviderService.isUsable(refreshToken)) {
-				accessToken = jwtProviderService.reGenerateToken(refreshToken, httpServletResponse);
-				setAuthenticate(accessToken);
+				String newAccessToken = jwtProviderService.reGenerateToken(refreshToken, httpServletResponse);
+				setAuthenticate(newAccessToken);
 				filterChain.doFilter(httpServletRequest, httpServletResponse);
 				return;
 			}
@@ -56,6 +56,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 			throw new NotFoundException(FAILED_TOKEN_NOT_FOUND_ERROR);
 		} catch (Exception exception) {
 			log.warn("[✅ LOGGER] JWT 에러 상세 설명: {}", exception.getMessage());
+			httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			handlerExceptionResolver.resolveException(httpServletRequest, httpServletResponse, null, exception);
 		} finally {
 			AuthenticationThreadLocal.removeAuthMemberHolder();
@@ -64,8 +65,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
 	protected void setAuthenticate(String accessToken) {
 		final AuthMember authMember = jwtProviderService.extractAuthMemberByAccessToken(accessToken);
-		final Authentication authentication = new UsernamePasswordAuthenticationToken(authMember, BLANK);
-		AuthenticationThreadLocal.saveAuthMemberHolder(authMember);
+		final Authentication authentication = new UsernamePasswordAuthenticationToken(authMember, BLANK, null);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
+		AuthenticationThreadLocal.saveAuthMemberHolder(authMember);
 	}
 }

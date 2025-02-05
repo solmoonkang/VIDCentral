@@ -1,5 +1,7 @@
 package com.vidcentral.api.domain.image;
 
+import java.util.Arrays;
+
 import lombok.Getter;
 
 @Getter
@@ -15,4 +17,8 @@ public enum ImageProperties {
 		this.contentType = contentType;
 	}
 
+	public static boolean isSupportedContentType(String contentType) {
+		return Arrays.stream(values())
+			.anyMatch(imageProperties -> imageProperties.contentType.equals(contentType));
+	}
 }

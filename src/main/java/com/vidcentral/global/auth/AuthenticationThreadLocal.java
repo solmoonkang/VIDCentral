@@ -14,10 +14,6 @@ public class AuthenticationThreadLocal {
 		AuthenticationThreadLocal.authMemberHolder.set(authMember);
 	}
 
-	public static AuthMember searchAuthMemberHolder() {
-		return authMemberHolder.get();
-	}
-
 	public static void removeAuthMemberHolder() {
 		authMemberHolder.remove();
 	}

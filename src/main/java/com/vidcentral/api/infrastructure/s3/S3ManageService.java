@@ -14,7 +14,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Service
 @RequiredArgsConstructor
-public class S3ManagerService {
+public class S3ManageService {
 
 	private final S3Client s3Client;
 
@@ -32,7 +32,7 @@ public class S3ManagerService {
 			s3Client.putObject(putObjectRequest,
 				RequestBody.fromInputStream(multipartFile.getInputStream(), multipartFile.getSize()));
 
-			return "https://" + bucketName + ".s3.ap-northeast-2.amazonaws.com/" + key;
+			return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, "ap-northeast-2", key);
 		} catch (IOException e) {
 			throw new RuntimeException("파일 업로드 실패", e);
 		}

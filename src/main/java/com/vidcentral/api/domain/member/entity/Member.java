@@ -1,7 +1,7 @@
 package com.vidcentral.api.domain.member.entity;
 
 import static com.vidcentral.global.common.util.GlobalConstant.*;
-import static com.vidcentral.global.common.util.ImageURL.*;
+import static com.vidcentral.global.common.util.MediaConstant.*;
 import static java.util.Objects.*;
 
 import com.vidcentral.global.common.entity.BaseTimeEntity;
