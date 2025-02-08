@@ -5,6 +5,7 @@ import static com.vidcentral.global.error.model.ErrorMessage.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -14,16 +15,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.vidcentral.api.application.auth.AuthorizationService;
 import com.vidcentral.api.application.auth.JwtProviderService;
 import com.vidcentral.api.application.media.MediaService;
+import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.auth.repository.TokenRepository;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.domain.member.repository.MemberRepository;
 import com.vidcentral.api.dto.request.auth.LoginRequest;
 import com.vidcentral.api.dto.request.member.SignUpRequest;
+import com.vidcentral.api.dto.request.member.UpdateMemberRequest;
 import com.vidcentral.api.dto.response.auth.LoginResponse;
 import com.vidcentral.api.dto.response.auth.TokenSaveResponse;
 import com.vidcentral.api.dto.response.member.MemberInfoResponse;
@@ -42,6 +47,9 @@ class MemberServiceTest {
 
 	@Mock
 	private JwtProviderService jwtProviderService;
+
+	@Mock
+	private MediaService mediaService;
 
 	@Mock
 	private MemberRepository memberRepository;
@@ -71,7 +79,7 @@ class MemberServiceTest {
 			memberWriteService,
 			memberReadService,
 			authorizationService,
-			mock(MediaService.class));
+			mediaService);
 	}
 
 	@DisplayName("[✅ SUCCESS] signUpMember: 성공적으로 사용자가 회원가입을 했습니다.")
@@ -209,5 +217,45 @@ class MemberServiceTest {
 		assertThatThrownBy(() -> memberService.searchMemberInfo(memberId))
 			.isInstanceOf(NotFoundException.class)
 			.hasMessage(FAILED_MEMBER_NOT_FOUND_ERROR.getMessage());
+	}
+
+	@DisplayName("[✅ SUCCESS] searchMemberInfo: 성공적으로 사용자 정보를 수정했습니다.")
+	@Test
+	void updateMemberInfo_void_success() {
+		// GIVEN
+		Member loginMember = MemberFixture.createMemberEntity();
+		AuthMember authMember = AuthMember.createAuthMember(loginMember.getEmail(), loginMember.getNickname());
+		UpdateMemberRequest updateMemberRequest = MemberFixture.createUpdateMemberRequest();
+		MockMultipartFile newProfileImageURL = new MockMultipartFile(
+			"profileImageURL", "image.jpg", MediaType.IMAGE_JPEG_VALUE, new byte[0]);
+
+		given(memberRepository.findMemberByEmail(any(String.class))).willReturn(Optional.of(loginMember));
+		given(mediaService.uploadImages(anyList())).willReturn(List.of("newProfileImageURL"));
+
+		// WHEN
+		memberService.updateMemberInfo(authMember, updateMemberRequest, newProfileImageURL);
+
+		// THEN
+		assertThat(loginMember.getNickname()).isEqualTo(updateMemberRequest.nickname());
+		assertThat(loginMember.getIntroduce()).isEqualTo(updateMemberRequest.introduce());
+	}
+
+	@DisplayName("[❎ FAILURE] updateMemberInfo: 해당 닉네임은 이미 존재하는 사용자 닉네임입니다.")
+	@Test
+	void updateMemberInfo_nickname_ConflictException_failure() {
+		// GIVEN
+		Member loginMember = MemberFixture.createMemberEntity();
+		AuthMember authMember = AuthMember.createAuthMember(loginMember.getEmail(), loginMember.getNickname());
+		UpdateMemberRequest updateMemberRequest = MemberFixture.createUpdateMemberRequest();
+		MockMultipartFile newProfileImageURL = new MockMultipartFile(
+			"profileImageURL", "image.jpg", MediaType.IMAGE_JPEG_VALUE, new byte[0]);
+
+		when(memberRepository.findMemberByEmail(any(String.class))).thenReturn(Optional.of(loginMember));
+		when(memberRepository.existsMemberByNickname(any())).thenReturn(true);
+
+		// WHEN & THEN
+		assertThatThrownBy(() -> memberService.updateMemberInfo(authMember, updateMemberRequest, newProfileImageURL))
+			.isInstanceOf(ConflictException.class)
+			.hasMessage(FAILED_NICKNAME_DUPLICATION_ERROR.getMessage());
 	}
 }
