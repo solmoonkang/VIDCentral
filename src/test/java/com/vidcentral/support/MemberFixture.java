@@ -47,7 +47,7 @@ public class MemberFixture {
 	public static MemberInfoResponse createMemberInfoResponse() {
 		return MemberInfoResponse.builder()
 			.nickname("testMemberNickname")
-			.introduce("testIntroduce")
+			.introduce("본인 소개에 대한 내용을 작성해주세요.")
 			.build();
 	}
 
