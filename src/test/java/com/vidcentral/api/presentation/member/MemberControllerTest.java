@@ -13,16 +13,20 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vidcentral.api.application.member.MemberService;
 import com.vidcentral.api.dto.request.auth.LoginRequest;
 import com.vidcentral.api.dto.request.member.SignUpRequest;
+import com.vidcentral.api.dto.request.member.UpdateMemberRequest;
 import com.vidcentral.api.dto.response.auth.LoginResponse;
 import com.vidcentral.api.dto.response.member.MemberInfoResponse;
 import com.vidcentral.support.MemberFixture;
@@ -94,7 +98,7 @@ class MemberControllerTest {
 			.andReturn();
 	}
 
-	@DisplayName("[✅ SUCCESS] searchMemberInfo: 성공적으로 사용자 조회를 완료했습니다.")
+	@DisplayName("[✅ SUCCESS] searchMemberInfo: 성공적으로 사용자 정보 조회를 완료했습니다.")
 	@Test
 	void searchMemberInfo_MemberInfoResponse_success() throws Exception {
 		// GIVEN
@@ -114,5 +118,36 @@ class MemberControllerTest {
 			.andExpect(jsonPath("$.nickname").value(memberInfoResponse.nickname()))
 			.andExpect(jsonPath("$.introduce").value(memberInfoResponse.introduce()))
 			.andReturn();
+	}
+
+	@DisplayName("[✅ SUCCESS] updateMemberInfo: 성공적으로 사용자 정보 수정을 완료했습니다.")
+	@Test
+	void updateMemberInfo_void_success() throws Exception {
+		// GIVEN
+		UpdateMemberRequest updateMemberRequest = MemberFixture.createUpdateMemberRequest();
+		MockMultipartFile newProfileImageURL = new MockMultipartFile(
+			"profileImageURL", "image.jpg", MediaType.IMAGE_JPEG_VALUE, new byte[0]);
+
+		doNothing().when(memberService).updateMemberInfo(any(), any(), any(MultipartFile.class));
+
+		// WHEN
+		MockHttpServletRequestBuilder multipartRequestBilder = MockMvcRequestBuilders.multipart("/api/members/update")
+			.file(newProfileImageURL)
+			.contentType(MediaType.MULTIPART_FORM_DATA)
+			.param("updateMemberRequest", objectMapper.writeValueAsString(updateMemberRequest));
+
+		multipartRequestBilder.with(request -> {
+			request.setMethod("PUT");
+			return request;
+		});
+
+		ResultActions resultActions = mockMvc.perform(multipartRequestBilder);
+
+		// THEN
+		MvcResult mvcResult = resultActions.andExpect(status().isOk())
+			.andReturn();
+
+		String content = mvcResult.getResponse().getContentAsString();
+		assertThat(content.replace("\"", "")).isEqualTo("성공적으로 회원 정보가 업데이트되었습니다.");
 	}
 }
