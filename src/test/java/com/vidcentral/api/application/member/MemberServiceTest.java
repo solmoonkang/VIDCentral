@@ -26,6 +26,7 @@ import com.vidcentral.api.dto.request.auth.LoginRequest;
 import com.vidcentral.api.dto.request.member.SignUpRequest;
 import com.vidcentral.api.dto.response.auth.LoginResponse;
 import com.vidcentral.api.dto.response.auth.TokenSaveResponse;
+import com.vidcentral.api.dto.response.member.MemberInfoResponse;
 import com.vidcentral.global.error.exception.BadRequestException;
 import com.vidcentral.global.error.exception.ConflictException;
 import com.vidcentral.global.error.exception.NotFoundException;
@@ -120,7 +121,7 @@ class MemberServiceTest {
 
 	@DisplayName("[✅ SUCCESS] loginMember: 성공적으로 사용자가 로그인을 했습니다.")
 	@Test
-	void loginMember_loginResponse_success() {
+	void loginMember_LoginResponse_success() {
 		// GIVEN
 		String accessToken = "testAccessToken";
 		String refreshToken = "testRefreshToken";
@@ -180,5 +181,33 @@ class MemberServiceTest {
 		assertThatThrownBy(() -> memberService.loginMember(httpServletResponse, loginRequest))
 			.isInstanceOf(BadRequestException.class)
 			.hasMessage(FAILED_INVALID_PASSWORD_ERROR.getMessage());
+	}
+
+	@DisplayName("[✅ SUCCESS] searchMemberInfo: 성공적으로 사용자 정보 목록을 조회했습니다.")
+	@Test
+	void searchMemberInfo_MemberInfoResponse_success() {
+		// GIVEN
+		Member member = MemberFixture.createMemberEntity();
+
+		// WHEN
+		MemberInfoResponse actualMemberInfoResponse = MemberFixture.createMemberInfoResponse();
+
+		// THEN
+		assertThat(actualMemberInfoResponse.nickname()).isEqualTo(member.getNickname());
+		assertThat(actualMemberInfoResponse.introduce()).isEqualTo(member.getIntroduce());
+	}
+
+	@DisplayName("[❎ FAILURE] searchMemberInfo: 존재하지 않는 사용자 이메일로 조회를 요청했습니다.")
+	@Test
+	void searchMemberInfo_NotFoundException_failure() {
+		// GIVEN
+		Long memberId = 1L;
+
+		given(memberRepository.findById(anyLong())).willReturn(Optional.empty());
+
+		// WHEN & THEN
+		assertThatThrownBy(() -> memberService.searchMemberInfo(memberId))
+			.isInstanceOf(NotFoundException.class)
+			.hasMessage(FAILED_MEMBER_NOT_FOUND_ERROR.getMessage());
 	}
 }
