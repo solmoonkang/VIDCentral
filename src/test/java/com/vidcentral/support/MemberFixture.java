@@ -33,6 +33,10 @@ public class MemberFixture {
 			.build();
 	}
 
+	public static LoginRequest createLoginRequest(Member member) {
+		return new LoginRequest(member.getEmail(), member.getPassword());
+	}
+
 	public static LoginResponse createLoginResponse() {
 		return LoginResponse.builder()
 			.accessToken("testAccessToken")
