@@ -17,11 +17,13 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import com.vidcentral.api.domain.auth.entity.AuthMember;
 import com.vidcentral.api.domain.auth.repository.TokenRepository;
 import com.vidcentral.api.domain.member.entity.Member;
 import com.vidcentral.api.dto.response.auth.TokenSaveResponse;
 import com.vidcentral.global.config.TokenConfig;
 import com.vidcentral.global.error.exception.NotFoundException;
+import com.vidcentral.support.JwtFixture;
 import com.vidcentral.support.MemberFixture;
 
 import io.jsonwebtoken.Claims;
@@ -29,7 +31,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 class JwtProviderServiceTest {
@@ -107,12 +108,12 @@ class JwtProviderServiceTest {
 		// GIVEN
 		Member loginMember = MemberFixture.createMemberEntity();
 		String refreshToken = jwtProviderService.generateRefreshToken(loginMember.getEmail());
-		MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 
 		given(tokenRepository.getTokenSaveValue(any())).willReturn(new TokenSaveResponse(refreshToken));
 
 		// WHEN
-		String newAccessToken = jwtProviderService.reGenerateToken(refreshToken, mockHttpServletResponse);
+		String newAccessToken = jwtProviderService.reGenerateToken(refreshToken, httpServletResponse);
 		Claims actualClaims = Jwts.parser()
 			.verifyWith(tokenConfig.getSecretKey())
 			.build()
@@ -122,8 +123,8 @@ class JwtProviderServiceTest {
 		// THEN
 		assertThat(actualClaims.get(MEMBER_EMAIL, String.class)).isEqualTo(loginMember.getEmail());
 
-		verify(mockHttpServletResponse).setHeader(ACCESS_TOKEN_HEADER, newAccessToken);
-		verify(mockHttpServletResponse).addCookie(any(Cookie.class));
+		verify(httpServletResponse).setHeader(ACCESS_TOKEN_HEADER, newAccessToken);
+		verify(httpServletResponse).addCookie(any(Cookie.class));
 	}
 
 	@DisplayName("[❎ FAILURE] reGenerateToken: 리프레시 토큰 정보에 해당하는 사용자가 없습니다.")
@@ -132,22 +133,14 @@ class JwtProviderServiceTest {
 		// GIVEN
 		Member loginMember = MemberFixture.createMemberEntity();
 		String refreshToken = jwtProviderService.generateRefreshToken(loginMember.getEmail());
-		MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 
 		given(tokenRepository.getTokenSaveValue(any())).willReturn(null);
 
 		// WHEN & THEN
-		assertThatThrownBy(() -> jwtProviderService.reGenerateToken(refreshToken, mockHttpServletResponse))
+		assertThatThrownBy(() -> jwtProviderService.reGenerateToken(refreshToken, httpServletResponse))
 			.isInstanceOf(NotFoundException.class)
 			.hasMessage(FAILED_UNAUTHORIZED_MEMBER_ERROR.getMessage());
-	}
-
-	@DisplayName("[❎ FAILURE] reGenerateToken: 해당 리프레시 토큰은 이미 재발급에 사용된 토큰입니다.")
-	@Test
-	void reGenerateToken_already_NotFoundException_failure() {
-		// GIVEN
-
-		// WHEN & THEN
 	}
 
 	@DisplayName("[✅ SUCCESS] extractToken: 성공적으로 액세스 토큰을 추출했습니다.")
@@ -186,45 +179,67 @@ class JwtProviderServiceTest {
 	@Test
 	void extractAuthMemberByAccessToken_AuthMember_success() {
 		// GIVEN
+		String memberEmail = "testMember@example.com";
+		String memberNickname = "testMemberNickname";
+		String accessToken = jwtProviderService.generateAccessToken(memberEmail, memberNickname);
 
 		// WHEN
+		AuthMember actualAuthMember = jwtProviderService.extractAuthMemberByAccessToken(accessToken);
 
 		// THEN
+		assertThat(actualAuthMember.email()).isEqualTo(memberEmail);
+		assertThat(actualAuthMember.nickname()).isEqualTo(memberNickname);
 	}
 
 	@DisplayName("[✅ SUCCESS] isUsable: 성공적으로 토큰이 유효한지 확인했습니다.")
 	@Test
 	void isUsable_true_success() {
 		// GIVEN
+		String memberEmail = "testMember@example.com";
+		String memberNickname = "testMemberNickname";
+		String accessToken = jwtProviderService.generateAccessToken(memberEmail, memberNickname);
 
 		// WHEN
+		boolean actualTokenUsable = jwtProviderService.isUsable(accessToken);
 
 		// THEN
+		assertThat(actualTokenUsable).isTrue();
 	}
 
 	@DisplayName("[❎ FAILURE] isUsable: 해당 토큰은 만료된 토큰입니다.")
 	@Test
 	void isUsable_false_failure() {
 		// GIVEN
+		String expiredAccessToken = JwtFixture.createExpiredToken(tokenConfig.getSecretKey());
 
 		// WHEN
+		boolean actualTokenUsable = jwtProviderService.isUsable(expiredAccessToken);
 
 		// THEN
+		assertThat(actualTokenUsable).isFalse();
 	}
 
 	@DisplayName("[❎ FAILURE] isUsable: 해당 토큰은 비어있는 토큰입니다.")
 	@Test
 	void isUsable_empty_NotFoundException_failure() {
 		// GIVEN
+		String emptyAccessToken = "";
 
 		// WHEN & THEN
+		assertThatThrownBy(() -> jwtProviderService.isUsable(emptyAccessToken))
+			.isInstanceOf(NotFoundException.class)
+			.hasMessage(FAILED_TOKEN_NOT_FOUND_ERROR.getMessage());
 	}
 
 	@DisplayName("[❎ FAILURE] isUsable: 해당 토큰은 잘못된 토큰입니다.")
 	@Test
 	void isUsable_invalid_NotFoundException_failure() {
 		// GIVEN
+		String invalidAccessToken = "invalidAccessToken";
 
 		// WHEN & THEN
+		assertThatThrownBy(() -> jwtProviderService.isUsable(invalidAccessToken))
+			.isInstanceOf(NotFoundException.class)
+			.hasMessage(FAILED_INVALID_TOKEN_ERROR.getMessage());
 	}
 }
