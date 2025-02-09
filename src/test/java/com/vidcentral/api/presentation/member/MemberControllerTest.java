@@ -29,6 +29,7 @@ import com.vidcentral.api.dto.request.member.SignUpRequest;
 import com.vidcentral.api.dto.request.member.UpdateMemberRequest;
 import com.vidcentral.api.dto.response.auth.LoginResponse;
 import com.vidcentral.api.dto.response.member.MemberInfoResponse;
+import com.vidcentral.support.AuthFixture;
 import com.vidcentral.support.MemberFixture;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,7 +46,7 @@ class MemberControllerTest {
 	private ObjectMapper objectMapper;
 
 	@BeforeEach
-	public void init() {
+	void setUp() {
 		objectMapper = new ObjectMapper();
 		mockMvc = MockMvcBuilders.standaloneSetup(memberController)
 			.setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper))
@@ -56,7 +57,7 @@ class MemberControllerTest {
 	@Test
 	void signUpMember_void_success() throws Exception {
 		// GIVEN
-		SignUpRequest signUpRequest = MemberFixture.createSignUpRequest();
+		SignUpRequest signUpRequest = AuthFixture.createSignUpRequest();
 
 		doNothing().when(memberService).signUpMember(any(SignUpRequest.class));
 
@@ -79,8 +80,8 @@ class MemberControllerTest {
 	@Test
 	void loginMember_LoginResponse_success() throws Exception {
 		// GIVEN
-		LoginRequest loginRequest = MemberFixture.createLoginRequest();
-		LoginResponse loginResponse = MemberFixture.createLoginResponse();
+		LoginRequest loginRequest = AuthFixture.createLoginRequest();
+		LoginResponse loginResponse = AuthFixture.createLoginResponse();
 
 		doReturn(loginResponse).when(memberService).loginMember(any(), any(LoginRequest.class));
 

@@ -35,6 +35,7 @@ import com.vidcentral.api.dto.response.member.MemberInfoResponse;
 import com.vidcentral.global.error.exception.BadRequestException;
 import com.vidcentral.global.error.exception.ConflictException;
 import com.vidcentral.global.error.exception.NotFoundException;
+import com.vidcentral.support.AuthFixture;
 import com.vidcentral.support.MemberFixture;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -86,7 +87,7 @@ class MemberServiceTest {
 	@Test
 	void signUpMember_void_success() {
 		// GIVEN
-		SignUpRequest signUpRequest = MemberFixture.createSignUpRequest();
+		SignUpRequest signUpRequest = AuthFixture.createSignUpRequest();
 
 		given(memberRepository.existsMemberByEmail(any(String.class))).willReturn(false);
 		given(memberRepository.existsMemberByNickname(any(String.class))).willReturn(false);
@@ -103,7 +104,7 @@ class MemberServiceTest {
 	@Test
 	void signUpMember_email_ConflictException_failure() {
 		// GIVEN
-		SignUpRequest signUpRequest = MemberFixture.createSignUpRequest();
+		SignUpRequest signUpRequest = AuthFixture.createSignUpRequest();
 
 		given(memberRepository.existsMemberByEmail(any(String.class))).willReturn(true);
 
@@ -117,7 +118,7 @@ class MemberServiceTest {
 	@Test
 	void signUpMember_nickname_ConflictException_failure() {
 		// GIVEN
-		SignUpRequest signUpRequest = MemberFixture.createSignUpRequest();
+		SignUpRequest signUpRequest = AuthFixture.createSignUpRequest();
 
 		given(memberRepository.existsMemberByNickname(any(String.class))).willReturn(true);
 
@@ -134,7 +135,7 @@ class MemberServiceTest {
 		String accessToken = "testAccessToken";
 		String refreshToken = "testRefreshToken";
 		Member loginMember = MemberFixture.createMemberEntity();
-		LoginRequest loginRequest = MemberFixture.createLoginRequest();
+		LoginRequest loginRequest = AuthFixture.createLoginRequest();
 
 		given(memberRepository.findMemberByEmail(any(String.class))).willReturn(Optional.of(loginMember));
 		given(passwordEncoder.matches(any(String.class), any(String.class))).willReturn(true);
@@ -161,7 +162,7 @@ class MemberServiceTest {
 	void loginMember_NotFoundException_failure() {
 		// GIVEN
 		Member loginMember = MemberFixture.createMemberEntity();
-		LoginRequest loginRequest = MemberFixture.createLoginRequest(loginMember);
+		LoginRequest loginRequest = AuthFixture.createLoginRequest(loginMember);
 
 		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 
@@ -178,7 +179,7 @@ class MemberServiceTest {
 	void loginMember_BadRequestException_failure() {
 		// GIVEN
 		Member loginMember = MemberFixture.createMemberEntity();
-		LoginRequest loginRequest = MemberFixture.createLoginRequest(loginMember);
+		LoginRequest loginRequest = AuthFixture.createLoginRequest(loginMember);
 
 		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 
